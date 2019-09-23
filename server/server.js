@@ -1,5 +1,6 @@
 var neo = require('neo4j-driver').v1;
 const express = require('express');
+const cors = require('cors');
 
 const url = 'bolt://localhost';
 
@@ -11,7 +12,7 @@ const router = express.Router();
 
 router.get('/users', (req, res)=>{
     session.readTransaction(function(transaction){
-        var result = transaction.run('match (u:user) return (u)');
+        var result = transaction.run('match (u:user) return u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl');
         return result
     }).then(function(result){
         session.close();
@@ -24,7 +25,7 @@ router.get('/users', (req, res)=>{
 
 router.get('/skills', (req, res)=>{
     session.readTransaction(function(transaction){
-            var result = transaction.run('match(u:user)-[kRel:knows]->(l:language) return u,l');
+            var result = transaction.run('match(u:user)-[kRel:knows]->(l:language) return u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl,l.name');
             return result
         }).then(function(result){
             session.close();
@@ -37,6 +38,7 @@ router.get('/skills', (req, res)=>{
 
 driver.close()
 
+app.use(cors());
 app.use(router);
 app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
 

@@ -23,6 +23,7 @@
     "neo4j-driver": "^1.7.6"
   },
   "devDependencies": {
+    "cors": "^2.8.5",
     "nodemon": "^1.19.2"
   }
 }
