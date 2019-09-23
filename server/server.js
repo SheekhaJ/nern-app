@@ -1,31 +1,44 @@
 var neo = require('neo4j-driver').v1;
+const express = require('express');
 
 const url = 'bolt://localhost';
 
 var driver = neo.driver(url, neo.auth.basic("neo4j", "password"), {maxTransactionRetryTime: 30000});
 var session = driver.session()
+const apiPort = 3001;
+const app = express();
+const router = express.Router();
 
-var getUsers = () => {session.readTransaction(function(transaction){
-    var result = transaction.run('match (u:user) return (u)');
-    return result
-}).then(function(result){
-    session.close()
-    result.records.map(record => console.log(record.get('u')))
-}).catch(function(error){
-    console.log('error: '+error)
-})};
+router.get('/users', (req, res)=>{
+    session.readTransaction(function(transaction){
+        var result = transaction.run('match (u:user) return (u)');
+        return result
+    }).then(function(result){
+        session.close();
+        return res.json({result});
+        // result.records.map(record => console.log(record.get('u')))
+    }).catch(function(error){
+        console.log('error: '+error);
+    })
+});
 
-var getSkills = () => {session.readTransaction(function(transaction){
-    var result = transaction.run('match(u:user)-[kRel:knows]->(l:language) return u,l');
-    return result
-}).then(function(result){
-    session.close()
-    result.records.forEach((record)=>console.log(`user "${record.get('u')}" knows "${record.get('l')}"`));
-}).catch(function(error){
-    console.log('error: '+error)
-})};
+router.get('/skills', (req, res)=>{
+    session.readTransaction(function(transaction){
+            var result = transaction.run('match(u:user)-[kRel:knows]->(l:language) return u,l');
+            return result
+        }).then(function(result){
+            session.close();
+            return res.json({result})
+            // result.records.forEach((record)=>console.log(`user "${record.get('u')}" knows "${record.get('l')}"`));
+        }).catch(function(error){
+            console.log('error: '+error);
+        })
+});
 
 driver.close()
 
-module.exports.getUsers = getUsers;
-module.exports.getSkills = getSkills;
+app.use(router);
+app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
+
+// module.exports.getUsers = getUsers;
+// module.exports.getSkills = getSkills;
