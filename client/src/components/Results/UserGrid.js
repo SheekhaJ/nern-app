@@ -2,23 +2,18 @@ import React, {useState, useEffect} from 'react'
 import Result from './Result'
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import axios from 'axios'
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
     },
-    paper: {
-        height: 140,
-        width: 100,
-    },
 }));
 
 const baseUrl = 'http://localhost:3001';
 
 function UserGrid() {
-    const [spacing, setSpacing] = useState(2);
+    const [spacing, setSpacing] = useState(6);
     const classes = useStyles();
     const [results, setResults] = useState([]);
 
@@ -45,8 +40,8 @@ function UserGrid() {
     }, [])
 
     return (
-        <Grid container className={classes.root} spacing={10}>
-            <Grid item xs={12}>
+        <Grid container className={classes.root} justify="center" spacing={10}>
+            <Grid item xs={9}>
                 <Grid container justify="center" spacing={spacing}>
                     {results.map(result => (
                         <Grid key={result.id} item>
