@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/users', (req, res)=>{
     session.readTransaction(function(transaction){
-        var result = transaction.run('match (u:user) return u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl');
+        var result = transaction.run('match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl');
         return result
     }).then(function(result){
         session.close();
