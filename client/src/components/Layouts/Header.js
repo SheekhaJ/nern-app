@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -7,6 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -61,8 +62,22 @@ const useStyles = makeStyles(theme => ({
       },
 }));
 
+const baseUrl = 'http://localhost:3001';
+
 function Header() {
     const classes = useStyles();
+    const [q, setQ] = useState('')
+
+    useEffect(()=>{
+        console.log('use effect called! q: '+q)
+        axios.get(baseUrl+'/query?q='+q)
+        .then((resp)=>{
+          console.log(resp);
+        })
+        .catch((error)=>{
+          console.log(error);
+        });
+    }, [q])
 
     return (
         <div className={classes.root}>
@@ -76,11 +91,14 @@ function Header() {
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
-            <InputBase placeholder="Search…"
+            <InputBase placeholder="Search.."
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }} inputProps={{ 'aria-label': 'search' }}
+              onChange={(e) => {               
+                 setQ(e.target.value);
+                }}
             />
           </div>
         </Toolbar>
