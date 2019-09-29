@@ -18,7 +18,7 @@ router.get('/users', (req, res)=>{
         session.close();
         return res.json({result})
     }).catch(function(error){
-        console.log('error: '+error);
+        console.log('users error: '+error);
     })
 });
 
@@ -31,15 +31,34 @@ router.get('/skills', (req, res)=>{
             return res.json({result})
             // result.records.forEach((record)=>console.log(`user "${record.get('u')}" knows "${record.get('l')}"`));
         }).catch(function(error){
-            console.log('error: '+error);
+            console.log('skills error: '+error);
         })
+});
+
+router.get('/query', (req,res)=>{
+    q = req.query.q
+    console.log('query q is "'+q+'"');
+    if (q!=''){
+        session.readTransaction(function(transaction){
+            var result = transaction.run("match (u:user)-[k:knows]->(l:language) where l.name=~'(?i)"+q+"'  return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc");
+            return result
+        }).then(function(result){
+            session.close();
+            return res.json({result})
+        }).catch(function(error){
+            console.log('skills error: '+error);
+        })
+    } else {
+        res.json({res: q});
+    }
 });
 
 driver.close()
 
 app.use(cors());
 app.use(router);
-app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
+var server = app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
+server.setTimeout(5000);
 
 // module.exports.getUsers = getUsers;
 // module.exports.getSkills = getSkills;
