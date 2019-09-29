@@ -37,9 +37,9 @@ function Result({result}) {
     return (
         <Card className={classes.card} key={result.id}>
             <CardActionArea key={result.id}>
-                <CardMedia component="img" key={result.id} alt={firstName} height="140" image="/static/images/cards/contemplative-reptile.jpg" title="Contemplative Reptile" />
+                <CardMedia component="img" key={result.id} alt={firstName} height="180" image={process.env.PUBLIC_URL+'/profile.jpg'} title="Contemplative Reptile" />
                 <CardContent>
-                    <Typography gutterBottom variant="h5" key={result.id} component="h2"> {firstName} {lastName} </Typography>
+                    <Typography gutterBottom variant="h5" key={result.id} component="h6"> {firstName} {lastName} </Typography>
                     <Typography variant="body2" color="textSecondary" key={result.id} component="p"> Skills: {email} </Typography>
                 </CardContent>
             </CardActionArea>
