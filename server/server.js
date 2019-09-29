@@ -12,12 +12,11 @@ const router = express.Router();
 
 router.get('/users', (req, res)=>{
     session.readTransaction(function(transaction){
-        var result = transaction.run('match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl');
+        var result = transaction.run('match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc');
         return result
     }).then(function(result){
         session.close();
-        return res.json({result});
-        // result.records.map(record => console.log(record.get('u')))
+        return res.json({result})
     }).catch(function(error){
         console.log('error: '+error);
     })
