@@ -2,15 +2,13 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {Header, Footer} from './components/Layouts/index'
-import ResultGrid from './components/Results/ResultGrid';
-import UserGrid from './components/Results/UserGrid'
+import Surface from './components/Layouts/Surface';
 
 function App() {
   return (
     <div className="App">
-      <Header/>
-      <UserGrid></UserGrid>
-      {/* <ResultGrid></ResultGrid> */}
+      <Header />
+      <Surface></Surface>
       {/* <Footer/> */}
     </div>
   );
