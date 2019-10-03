@@ -26,6 +26,15 @@ export default function AddUser() {
   const handleSubmit = () => {
     var bodyFormData = user;
     console.log('form data: ',bodyFormData)
+    axios({
+      method: 'post',
+      url: baseUrl+'/adduser',
+      data: bodyFormData
+    }).then((response) => {
+      console.log('response: ', response);
+    }).catch((error) => {
+      console.log('error: ', error);
+    })
   }
 
     return (
