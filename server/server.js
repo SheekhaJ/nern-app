@@ -1,6 +1,7 @@
 var neo = require('neo4j-driver').v1;
 const express = require('express');
 const cors = require('cors');
+const bodyparser = require('body-parser');
 
 const url = 'bolt://localhost';
 
@@ -53,12 +54,28 @@ router.get('/query', (req,res)=>{
     }
 });
 
+router.post('/adduser', (req, res) => {
+    var firstName = req.body.data.firstName;
+    var lastName = req.body.data.lastName;
+    var email = req.body.data.email;
+    var githubUrl = req.body.data.githubUrl;
+    var linkedinUrl = req.body.data.linkedinUrl;
+
+    [firstName, lastName, email, githubUrl, linkedinUrl].forEach((a) => {
+        console.log('var: ' + a);
+    })
+    
+    res.json({ res: 'Success' });
+})
+
 driver.close()
 
+app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
 app.use(cors());
 app.use(router);
 var server = app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
-server.setTimeout(5000);
+server.setTimeout(10000);
 
 // module.exports.getUsers = getUsers;
 // module.exports.getSkills = getSkills;
