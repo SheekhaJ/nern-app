@@ -1,12 +1,16 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import UserGrid from '../Results/UserGrid';
+import Divider from '@material-ui/core/Divider';
+import AddUser from '../AddUser';
 
 const useStyles = makeStyles(theme => ({
     root: {
       padding: theme.spacing(3, 2),
+    },
+    section2: {
+        margin: theme.spacing(2),
     },
   }));
 
@@ -15,8 +19,13 @@ function Surface() {
 
     return (
       <div>
-        <Paper className={classes.root}>
-        <UserGrid></UserGrid>
+            <Paper className={classes.root}>
+                <AddUser></AddUser>
+                <Divider variant='middle' />
+                <div className='classes.section2' >
+                <UserGrid></UserGrid>
+                </div>
+        
         </Paper>
       </div>
     );
