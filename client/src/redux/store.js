@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware } from 'redux'
 import rootReducer from './reducers'
+import {createLogger} from 'redux-logger'
 const reduxThunk = require('redux-thunk').default
 
 // const store = createStore(userResultReducer, applyMiddleware(reduxThunk))
@@ -10,5 +11,5 @@ const reduxThunk = require('redux-thunk').default
 // store.dispatch(fetchUsers());
 
 export default function configureStore(preloadedState) {
-    return createStore(rootReducer, applyMiddleware(reduxThunk));
+    return createStore(rootReducer, applyMiddleware(reduxThunk, createLogger()));
 }
