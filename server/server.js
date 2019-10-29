@@ -60,12 +60,19 @@ router.post('/adduser', (req, res) => {
     var email = req.body.data.email;
     var githubUrl = req.body.data.githubUrl;
     var linkedinUrl = req.body.data.linkedinUrl;
-
-    [firstName, lastName, email, githubUrl, linkedinUrl].forEach((a) => {
-        console.log('var: ' + a);
-    })
     
-    res.json({ res: 'Success' });
+    session.writeTransaction(function (transaction) {
+        return transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
+        // var result = transaction.run("match (u:user{firstName: '" + firstName + "'}) return u");
+    }).then(result => {
+        console.log('------------------------------')
+        console.log("nodes created: ", result.summary.counters.nodesCreated());
+    }).catch(error => {
+        console.log('error: ', error)
+    }).finally(()=>{
+        session.close();
+        return res.json({ result });
+    });
 })
 
 driver.close()
