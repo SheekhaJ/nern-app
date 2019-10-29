@@ -8,8 +8,8 @@ import configureStore from './redux/store';
 const store = configureStore()
 
 function App() {
-  console.log('store is ' + store.getState())
-  debugger;
+  console.log('store is ' , store.getState())
+  // debugger;
   return (
     <Provider store={store}>
     <div className="App">

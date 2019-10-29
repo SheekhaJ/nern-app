@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react'
 import Result from './Result'
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios'
+import {connect} from 'react-redux'
+import {fetchUsers} from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -10,40 +11,20 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const baseUrl = 'http://localhost:3001';
-
-function UserGrid() {
+function UserGrid(props) {
     const [spacing, setSpacing] = useState(6);
     const classes = useStyles();
-    const [results, setResults] = useState([]);
+    var users;
 
     useEffect(()=>{
-        axios.get(baseUrl+'/users')
-        .then((response)=>{
-            var res = response.data.result.records;
-            var results = new Array();
-
-            for(var i=0; i<res.length; i++){
-                var r = res[i]
-                const id = r._fields[0]
-                const firstName = r._fields[1]
-                const lastName = r._fields[2]
-                const email = r._fields[3]
-                const githubUrl = r._fields[4]
-                const linkedinUrl = r._fields[5]
-                results.push([id, firstName, lastName, email, githubUrl, linkedinUrl]);
-            }
-            setResults(results)
-        }).catch((error)=>{
-            console.log('error: '+error);
-        });
-    }, [])
-
+        props.fetchUsersAction();
+    }, []);
+    
     return (
         <Grid container className={classes.root} justify="center" spacing={10}>
             <Grid item xs={9}>
                 <Grid container justify="center" spacing={spacing}>
-                    {results.map(result => (
+                   {props.users && props.users.map(result => (
                         <Grid key={result.id} item>
                             <Result key={result.id} result={result}></Result>
                         </Grid>
@@ -54,4 +35,16 @@ function UserGrid() {
             )
         }
         
-export default UserGrid
+const mapStateToProps = (state) => {
+    return {
+        ...state.users
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchUsersAction: () => dispatch(fetchUsers())
+    }
+}
+        
+export default connect(mapStateToProps, mapDispatchToProps)(UserGrid)
