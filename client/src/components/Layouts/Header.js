@@ -69,7 +69,6 @@ function Header() {
     const [q, setQ] = useState('')
 
     useEffect(()=>{
-        console.log('use effect called! q: '+q)
         axios.get(baseUrl+'/query?q='+q)
         .then((resp)=>{
           console.log(resp);

@@ -23,7 +23,7 @@ function Surface() {
                 <AddUser></AddUser>
                 <Divider variant='middle' />
                 <div className='classes.section2' >
-                <UserGrid></UserGrid>
+                <UserGrid/>
                 </div>
         
         </Paper>
