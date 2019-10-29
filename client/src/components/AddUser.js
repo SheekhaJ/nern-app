@@ -7,11 +7,11 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
-import axios from 'axios'
+import { connect } from 'react-redux';
+import { addUser } from '../redux/actions';
 
-const baseUrl = 'http://localhost:3001';
+export function AddUser(props) {
 
-export default function AddUser() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState({firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: ''})
 
@@ -24,13 +24,8 @@ export default function AddUser() {
   };
   
   const handleSubmit = () => {
-    axios.post(baseUrl + '/adduser', {
-      data: user
-    }).then((response) => {
-      console.log('response: ', response);
-    }).catch((error) => {
-      console.log('error: ', error);
-    })
+    props.addNewUser(user);
+    setOpen(false);
   }
 
     return (
@@ -121,4 +116,10 @@ export default function AddUser() {
     );
 }
 
-// export default AddUser
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addNewUser: (user) => dispatch(addUser(user))
+  }
+}
+
+export default connect(null, mapDispatchToProps) (AddUser)
