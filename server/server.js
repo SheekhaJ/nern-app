@@ -63,13 +63,15 @@ router.post('/adduser', (req, res) => {
     
     session.writeTransaction(function (transaction) {
         return transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
-        // var result = transaction.run("match (u:user{firstName: '" + firstName + "'}) return u");
     }).then(result => {
-        console.log('------------------------------')
-        console.log("nodes created: ", result.summary.counters.nodesCreated());
+        if (result.summary.counters.nodesCreated() === 1) {
+            console.log("query executed - ", result.summary.statement.text);
+        } else {
+            console.err('something weird happened while adding a single new user!');
+        }
     }).catch(error => {
         console.log('error: ', error)
-    }).finally(()=>{
+    }).finally((result)=>{
         session.close();
         return res.json({ result });
     });
