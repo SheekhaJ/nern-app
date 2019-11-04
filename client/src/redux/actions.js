@@ -5,6 +5,7 @@ export const GET_USER_RESULT_REQUEST = 'GET_USER_RESULT_REQUEST'
 export const GET_USER_RESULT_SUCCESS = 'GET_USER_RESULT_SUCCESS'
 export const GET_USER_RESULT_FAILURE = 'GET_USER_RESULT_FAILURE'
 export const ADD_NEW_USER_POST_REQUEST = 'ADD_NEW_USER_POST_REQUEST'
+export const ADD_NEW_USER_POST_RESPONSE = 'ADD_NEW_USER_POST_RESPONSE'
 
 function getUserResultRequest() {
   return {
@@ -13,7 +14,6 @@ function getUserResultRequest() {
 };
 
 function getUserResultSuccess(users) {
-  console.log('in getuser result success action. users are '+users)
   return {
     type: GET_USER_RESULT_SUCCESS,
     payload: users
@@ -26,6 +26,19 @@ function getUserResultFailure(error) {
     payload: error
   };
 };
+
+function addUserRequest(user) {
+  return {
+    type: ADD_NEW_USER_POST_REQUEST,
+    payload: user
+  }
+}
+
+function addUserResponse() {
+  return {
+    type: ADD_NEW_USER_POST_RESPONSE
+  }
+}
 
 export const fetchUsers = () => {
   return function (dispatch) {
@@ -53,12 +66,27 @@ export const fetchUsers = () => {
                 linkedinUrl
               ]);
             }
-            console.log('in action creator user results: ' + results);
             return dispatch(getUserResultSuccess(results));
           })
           .catch(error => {
-              console.log("in action creator error: " + error);
             dispatch(getUserResultFailure(error));
           });
     }
+}
+
+export const addUser = (user) => {
+  return function (dispatch) {
+    dispatch(addUserRequest())
+    axios
+      .post(serverURL + "/adduser", {
+        data: user
+      })
+      .then(response => {
+        console.log("response: ", response);
+        dispatch(addUserResponse(response.status));
+      })
+      .catch(error => {
+        console.log("error: ", error);
+      });
+  }
 }
