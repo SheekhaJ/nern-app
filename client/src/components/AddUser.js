@@ -26,6 +26,7 @@ export function AddUser(props) {
   const handleSubmit = () => {
     props.addNewUser(user);
     setOpen(false);
+    setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
   }
 
     return (
@@ -118,7 +119,7 @@ export function AddUser(props) {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addNewUser: (user) => dispatch(addUser(user))
+    addNewUser: (user) => dispatch(addUser(user)),
   }
 }
 
