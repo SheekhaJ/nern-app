@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
-import {GET_USER_RESULT_REQUEST, GET_USER_RESULT_SUCCESS, GET_USER_RESULT_FAILURE} from './actions'
-import {ADD_NEW_USER_POST_REQUEST} from './actions'
+import {GET_USER_RESULT_REQUEST, GET_USER_RESULT_SUCCESS, GET_USER_RESULT_FAILURE, LOGIN_USER_FAILURE} from './actions'
+import { ADD_NEW_USER_POST_REQUEST } from './actions'
+import {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS} from './actions'
 
 const initState = {
     loading: true,
@@ -48,5 +49,31 @@ const addUserReducer = (state = {}, action) => {
   }
 }
 
-const rootReducer = combineReducers({ users: userResultReducer });
+const loginUserReducer = (state = {loggedIn: false, loggedInUser: '', loginError: ''}, action) => {
+  switch (action.type) {
+    case LOGIN_USER_REQUEST:
+      return {
+        ...state,
+        loggedIn: false
+      }
+    case LOGIN_USER_SUCCESS:
+      return {
+        ...state,
+        loggedIn: true,
+        loggedInUser: action.payload,
+        loginError: ''
+      }
+    case LOGIN_USER_FAILURE:
+      return {
+        ...state,
+        loggedIn: true,
+        loggedInUser: null,
+        loginError: action.payload
+      }
+    default: 
+      return state
+  }
+}
+
+const rootReducer = combineReducers({ users: userResultReducer, loginUser: loginUserReducer });
 export default rootReducer
