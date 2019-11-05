@@ -5,7 +5,11 @@ export const GET_USER_RESULT_REQUEST = 'GET_USER_RESULT_REQUEST'
 export const GET_USER_RESULT_SUCCESS = 'GET_USER_RESULT_SUCCESS'
 export const GET_USER_RESULT_FAILURE = 'GET_USER_RESULT_FAILURE'
 export const ADD_NEW_USER_POST_REQUEST = 'ADD_NEW_USER_POST_REQUEST'
-export const ADD_NEW_USER_POST_RESPONSE = 'ADD_NEW_USER_POST_RESPONSE'
+export const ADD_NEW_USER_POST_SUCCESS = "ADD_NEW_USER_POST_SUCCESS"
+export const ADD_NEW_USER_POST_FAILURE = "ADD_NEW_USER_POST_FAILURE"
+export const LOGIN_USER_REQUEST = 'LOGIN_USER_REQUEST'
+export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS'
+export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE'
 
 function getUserResultRequest() {
   return {
@@ -34,9 +38,36 @@ function addUserRequest(user) {
   }
 }
 
-function addUserResponse() {
+function addUserSuccess() {
   return {
-    type: ADD_NEW_USER_POST_RESPONSE
+    type: ADD_NEW_USER_POST_SUCCESS
+  }
+}
+
+function addUserFailure() {
+  return {
+    type: ADD_NEW_USER_POST_FAILURE
+  }
+}
+
+function loginUserRequest(email) {
+  return {
+    type: LOGIN_USER_REQUEST,
+    payload: email
+  }
+}
+
+function loginUserSuccess(firstName, lastName) {
+  return {
+    type: LOGIN_USER_SUCCESS,
+    payload: {fName: firstName, lName: lastName}
+  }
+}
+
+function loginUserFailure(error) {
+  return {
+    type: LOGIN_USER_FAILURE,
+    payload: error
   }
 }
 
@@ -69,7 +100,7 @@ export const fetchUsers = () => {
             return dispatch(getUserResultSuccess(results));
           })
           .catch(error => {
-            dispatch(getUserResultFailure(error));
+            return dispatch(getUserResultFailure(error));
           });
     }
 }
@@ -78,15 +109,31 @@ export const addUser = (user) => {
   return function (dispatch) {
     dispatch(addUserRequest())
     axios
-      .post(serverURL + "/adduser", {
-        data: user
-      })
+      .post(serverURL + "/adduser", {data: user})
       .then(response => {
-        console.log("response: ", response);
-        dispatch(addUserResponse(response.status));
+        console.log("addUser action response: ", response);
+        return dispatch(addUserSuccess(response.status));
       })
       .catch(error => {
-        console.log("error: ", error);
+        console.log("addUser action error response: ", error);
+        return dispatch(addUserFailure(error));
+      });
+  }
+}
+
+export const loginUser = (email) => {
+  return function (dispatch) {
+    dispatch(loginUserRequest(email));
+    axios
+      .post(serverURL + "/login", { payload: email })
+      .then(response => {
+        var r = response.data.records[0];
+        // var fullName =  + " " + ;
+        return dispatch(loginUserSuccess(r._fields[1], r._fields[2]));
+      })
+      .catch(error => {
+        console.log("login user action error: ", error);
+        return dispatch(loginUserFailure(error));
       });
   }
 }
