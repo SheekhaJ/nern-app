@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react'
+import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import axios from 'axios';
+import LoginDialog from '../LoginDialog';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -67,7 +67,7 @@ const baseUrl = 'http://localhost:3001';
 function Header() {
     const classes = useStyles();
     const [q, setQ] = useState('')
-
+  
     useEffect(()=>{
         axios.get(baseUrl+'/query?q='+q)
         .then((resp)=>{
@@ -79,31 +79,36 @@ function Header() {
     }, [q])
 
     return (
-        <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="open drawer">
-            <MenuIcon />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>Expert Recommender System</Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase placeholder="Search.."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }} inputProps={{ 'aria-label': 'search' }}
-              onChange={(e) => {               
-                 setQ(e.target.value);
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <LoginDialog />
+            {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="open drawer">  */}
+            {/* <MenuIcon /> */}
+            {/* </IconButton> */}
+            <Typography className={classes.title} variant="h6" noWrap>
+              Expert Recommender System
+            </Typography>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon />
+              </div>
+              <InputBase
+                placeholder="Search.."
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput
                 }}
-            />
-          </div>
-        </Toolbar>
-      </AppBar>
-    </div>
-    )
+                inputProps={{ "aria-label": "search" }}
+                onChange={e => {
+                  setQ(e.target.value);
+                }}
+              />
+            </div>
+          </Toolbar>
+        </AppBar>
+      </div>
+    );
 }
 
 export default Header

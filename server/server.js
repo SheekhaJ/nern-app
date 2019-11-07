@@ -11,6 +11,28 @@ const apiPort = 3001;
 const app = express();
 const router = express.Router();
 
+router.post('/login', (req, res) => {
+    var email = req.body.payload;
+    console.log('post login ',email)
+    session.readTransaction(function(transaction) {
+        var result = transaction.run("match (u:user{email: '" + email + "'}) return u.id, u.firstName, u.lastName");
+        return result;
+      })
+      .then(result => {
+        if (result.records.length === 1) {
+            return res.json(result);
+        } else {
+          console.err('something odd during login return ',result);
+        }
+      })
+      .catch(error => {
+        console.log("error: ", error);
+      })
+        .finally(() => {
+          session.close();
+      });
+})
+
 router.get('/users', (req, res)=>{
     session.readTransaction(function(transaction){
         var result = transaction.run('match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc');
@@ -62,7 +84,12 @@ router.post('/adduser', (req, res) => {
     var linkedinUrl = req.body.data.linkedinUrl;
     
     session.writeTransaction(function (transaction) {
-        return transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
+        var result = transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
+        // var temp =  transaction.run(
+        //   'call algo.degree.stream("user","friendOf",{direction:"outgoing"}) yield nodeId,score return algo.asNode(nodeId).firstName as name, score as followers order by followers desc'
+        // );
+        // console.log(temp)
+        return result
     }).then(result => {
         if (result.summary.counters.nodesCreated() === 1) {
             console.log("query executed - ", result.summary.statement.text);
