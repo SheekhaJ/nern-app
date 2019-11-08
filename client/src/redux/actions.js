@@ -60,10 +60,10 @@ function loginUserRequest(email) {
   }
 }
 
-function loginUserSuccess(firstName, lastName) {
+function loginUserSuccess(userid, firstName, lastName) {
   return {
     type: LOGIN_USER_SUCCESS,
-    payload: {fName: firstName, lName: lastName}
+    payload: {uid:userid, fName: firstName, lName: lastName}
   }
 }
 
@@ -152,7 +152,7 @@ export const loginUser = (email) => {
       .post(serverURL + "/login", { payload: email })
       .then(response => {
         var r = response.data.records[0];
-        return dispatch(loginUserSuccess(r._fields[1], r._fields[2]));
+        return dispatch(loginUserSuccess(r._fields[0], r._fields[1], r._fields[2]));
       })
       .catch(error => {
         console.log("login user action error: ", error);
@@ -164,6 +164,6 @@ export const loginUser = (email) => {
 export const getUserProfile = (userid) => {
   return function (dispatch) {
     dispatch(getUserProfileRequest(userid));
-    
+
   }
 }
