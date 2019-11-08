@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     },
   }));
 
-function Surface() {
+function ResultSurface() {
     const classes = useStyles();
 
     return (
@@ -31,4 +31,4 @@ function Surface() {
     );
 }
 
-export default Surface
+export default ResultSurface
