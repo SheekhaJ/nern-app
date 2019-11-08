@@ -40,17 +40,19 @@ function LoginDialog(props) {
   };
 
   useEffect(() => {
-    setLoggedUserFirstName(props.fname);
-    setLoggedUserLastName(props.lname);
+    sessionStorage.setItem('erAuthFirstName', props.fname);
+    sessionStorage.setItem('erAuthLastName', props.lname);
+    setLoggedUserFirstName(sessionStorage.getItem('erAuthFirstName'));
+    setLoggedUserLastName(sessionStorage.getItem('erAuthLastName'));
   }, [props.fname, props.lname]);
 
     return (
       <div>
-        {!loggedUserFirstName && !loggedUserLastName &&
+        {loggedUserFirstName ==='undefined' && loggedUserLastName === "undefined" &&
           <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
             Log In
         </Button>}
-        {loggedUserFirstName && loggedUserLastName && <Button variant='outlined'
+        {loggedUserFirstName !== 'undefined' && loggedUserLastName != 'undefined' && <Button variant='outlined'
           className={classes.button} color='inherit'>
           {loggedUserFirstName} {loggedUserLastName}
         </Button>}
