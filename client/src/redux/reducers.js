@@ -75,5 +75,9 @@ const loginUserReducer = (state = {loggedIn: false, loggedInUser: '', loginError
   }
 }
 
-const rootReducer = combineReducers({ users: userResultReducer, loginUser: loginUserReducer });
+const rootReducer = combineReducers({
+  users: userResultReducer,
+  loginUser: loginUserReducer,
+  addUser: addUserReducer
+});
 export default rootReducer
