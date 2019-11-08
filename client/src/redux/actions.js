@@ -10,6 +10,9 @@ export const ADD_NEW_USER_POST_FAILURE = "ADD_NEW_USER_POST_FAILURE"
 export const LOGIN_USER_REQUEST = 'LOGIN_USER_REQUEST'
 export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS'
 export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE'
+export const GET_USER_PROFILE_REQUEST = 'GET_USER_PROFILE_REQUEST'
+export const GET_USER_PROFILE_SUCCESS = 'GET_USER_PROFILE_SUCCESS'
+export const GET_USER_PROFILE_FAILURE = 'GET_USER_PROFILE_FAILURE'
 
 function getUserResultRequest() {
   return {
@@ -71,6 +74,27 @@ function loginUserFailure(error) {
   }
 }
 
+function getUserProfileRequest(userid) {
+  return {
+    type: GET_USER_PROFILE_REQUEST, 
+    payload: userid
+  }
+}
+
+function getUserProfileSuccess(user) {
+  return {
+    type: GET_USER_PROFILE_SUCCESS,
+    payload: user
+  }
+}
+
+function getUserProfileFailure(error) {
+  return {
+    type: GET_USER_PROFILE_FAILURE,
+    payload: error
+  }
+}
+
 export const fetchUsers = () => {
   return function (dispatch) {
         dispatch(getUserResultRequest());
@@ -128,12 +152,18 @@ export const loginUser = (email) => {
       .post(serverURL + "/login", { payload: email })
       .then(response => {
         var r = response.data.records[0];
-        // var fullName =  + " " + ;
         return dispatch(loginUserSuccess(r._fields[1], r._fields[2]));
       })
       .catch(error => {
         console.log("login user action error: ", error);
         return dispatch(loginUserFailure(error));
       });
+  }
+}
+
+export const getUserProfile = (userid) => {
+  return function (dispatch) {
+    dispatch(getUserProfileRequest(userid));
+    
   }
 }
