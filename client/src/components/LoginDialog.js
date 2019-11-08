@@ -34,8 +34,9 @@ function LoginDialog(props) {
     };
 
   const login = () => {
-      props.loginuser(username)
-      setOpen(false)
+    props.loginuser(username)
+    setUsername('')
+    setOpen(false)
   };
 
   useEffect(() => {
@@ -47,7 +48,7 @@ function LoginDialog(props) {
       <div>
         {!loggedUserFirstName && !loggedUserLastName &&
           <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
-          Log In
+            Log In
         </Button>}
         {loggedUserFirstName && loggedUserLastName && <Button variant='outlined'
           className={classes.button} color='inherit'>
