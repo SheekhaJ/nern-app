@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -6,30 +6,53 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import axios from 'axios';
+import AccountCircleSharpIcon from "@material-ui/icons/AccountCircleSharp";
+import { makeStyles } from "@material-ui/core/styles";
+import { loginUser } from '../redux/actions';
+import { connect } from "react-redux";
 
-function LoginDialog() {
-    const baseUrl = "http://localhost:3001";
+  const useStyles = makeStyles(theme => ({
+    button: {
+      margin: theme.spacing(1)
+    }
+  }));
+  
+
+function LoginDialog(props) {
     const [open, setOpen] = useState(false);
     const [username, setUsername] = useState('');
+    const [loggedUserFirstName, setLoggedUserFirstName] = useState('')
+    const [loggedUserLastName, setLoggedUserLastName] = useState('')
+  const classes = useStyles();
 
     const handleClickOpen = () => {
       setOpen(true);
     };
 
-    const handleClose = () => {
+  const handleClose = () => {
       setOpen(false);
     };
 
-    const login = (username) => {
-        console.log('login clicked ', username);
-    };
+  const login = () => {
+      props.loginuser(username)
+      setOpen(false)
+  };
+
+  useEffect(() => {
+    setLoggedUserFirstName(props.fname);
+    setLoggedUserLastName(props.lname);
+  }, [props.fname, props.lname]);
 
     return (
       <div>
-        <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
+        {!loggedUserFirstName && !loggedUserLastName &&
+          <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
           Log In
-        </Button>
+        </Button>}
+        {loggedUserFirstName && loggedUserLastName && <Button variant='outlined'
+          className={classes.button} color='inherit'>
+          {loggedUserFirstName} {loggedUserLastName}
+        </Button>}
         <Dialog
           open={open}
           onClose={handleClose}
@@ -46,14 +69,19 @@ function LoginDialog() {
               type="email"
               value={username}
               fullWidth
-                onChange={e => {setUsername(e.target.value);}}
+              onChange={e => {
+                setUsername(e.target.value);
+              }}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
-                    <Button onClick={() => {login(username)}} color="primary">
+            <Button
+              onClick={() => {login(username);}}
+              color="primary"
+            >
               Log In
             </Button>
           </DialogActions>
@@ -62,4 +90,24 @@ function LoginDialog() {
     );
 }
 
-export default LoginDialog
+const mapStateToProps = (state) => {
+  // console.log(
+  //   "in mapstatetoprops: ", state, 
+  //   state.loginUser.loggedInUser["fName"],
+  //   state.loginUser.loggedInUser["lName"]
+  // );
+  
+  return {
+    fname: state.loginUser.loggedInUser['fName'],
+    lname: state.loginUser.loggedInUser['lName']
+    // ...state.loginUser
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginuser: (username) => dispatch(loginUser(username))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginDialog)
