@@ -6,7 +6,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import AccountCircleSharpIcon from "@material-ui/icons/AccountCircleSharp";
 import { makeStyles } from "@material-ui/core/styles";
 import { loginUser } from '../redux/actions';
 import { connect } from "react-redux";
@@ -21,9 +20,10 @@ import { connect } from "react-redux";
 function LoginDialog(props) {
     const [open, setOpen] = useState(false);
     const [username, setUsername] = useState('');
-    const [loggedUserFirstName, setLoggedUserFirstName] = useState('')
-    const [loggedUserLastName, setLoggedUserLastName] = useState('')
-  const classes = useStyles();
+    const [loggedUserID, setLoggedUserID] = useState('');
+    const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
+    const [loggedUserLastName, setLoggedUserLastName] = useState('');
+    const classes = useStyles();
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -40,19 +40,22 @@ function LoginDialog(props) {
   };
 
   useEffect(() => {
+    sessionStorage.setItem('eruid', props.uid)
     sessionStorage.setItem('erAuthFirstName', props.fname);
     sessionStorage.setItem('erAuthLastName', props.lname);
+    setLoggedUserID(sessionStorage.getItem('eruid'));
     setLoggedUserFirstName(sessionStorage.getItem('erAuthFirstName'));
     setLoggedUserLastName(sessionStorage.getItem('erAuthLastName'));
-  }, [props.fname, props.lname]);
+  }, [props.uid, props.fname, props.lname]);
 
     return (
       <div>
-        {loggedUserFirstName ==='undefined' && loggedUserLastName === "undefined" &&
+        {loggedUserID === 'undefined' && loggedUserFirstName ==='undefined' && loggedUserLastName === "undefined" &&
           <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
             Log In
         </Button>}
-        {loggedUserFirstName !== 'undefined' && loggedUserLastName != 'undefined' && <Button variant='outlined'
+        {loggedUserID !== 'undefined' && loggedUserFirstName !== 'undefined' && loggedUserLastName !== 'undefined' &&
+          <Button variant='outlined'
           className={classes.button} color='inherit'>
           {loggedUserFirstName} {loggedUserLastName}
         </Button>}
@@ -94,16 +97,10 @@ function LoginDialog(props) {
 }
 
 const mapStateToProps = (state) => {
-  // console.log(
-  //   "in mapstatetoprops: ", state, 
-  //   state.loginUser.loggedInUser["fName"],
-  //   state.loginUser.loggedInUser["lName"]
-  // );
-  
   return {
+    uid: state.loginUser.loggedInUser['uid'],
     fname: state.loginUser.loggedInUser['fName'],
     lname: state.loginUser.loggedInUser['lName']
-    // ...state.loginUser
   }
 }
 
