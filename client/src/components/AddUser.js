@@ -13,7 +13,8 @@ import { addUser } from '../redux/actions';
 export function AddUser(props) {
 
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState({firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: ''})
+  const [user, setUser] = useState({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' })
+  const [openAlert, setOpenAlert] = useState(false);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -22,11 +23,19 @@ export function AddUser(props) {
     const handleClose = () => {
       setOpen(false);
   };
-  
+
   const handleSubmit = () => {
-    props.addNewUser(user);
-    setOpen(false);
-    setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
+    if (user.firstName === '' || user.lastName === '') {
+      setOpenAlert(true)
+    } else {
+      props.addNewUser(user);
+      setOpen(false);
+      setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
+    }
+  }
+
+  const handleAlertClose = () => {
+    setOpenAlert(false);
   }
 
     return (
@@ -48,11 +57,12 @@ export function AddUser(props) {
           onClose={handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Add User</DialogTitle>
+          <DialogTitle id="form-dialog-title">Add New User</DialogTitle>
           <DialogContent>
-            <DialogContentText> Enter user details: </DialogContentText>
+            <DialogContentText> Enter User Details: </DialogContentText>
             <TextField
               autoFocus
+              required
               margin="dense"
               id="firstName"
               label="First Name"
@@ -63,6 +73,7 @@ export function AddUser(props) {
               }}
             />
             <TextField
+              required
               margin="dense"
               id="lastName"
               label="Last Name"
@@ -111,6 +122,15 @@ export function AddUser(props) {
             <Button onClick={handleSubmit} color="primary">
               Submit
             </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description' open={openAlert} onClose={handleAlertClose}>
+          <DialogTitle id='alert-dialog-title'>{"Invalid input for new user"}</DialogTitle>
+          <DialogContent id='alert-dialog-description'>First and Last name of new user are mandatory</DialogContent>
+          <DialogActions>
+            <Button onClick={handleAlertClose} color='primary'>Cancel</Button>
+            <Button onClick={handleAlertClose} color='primary'>Ok</Button>
           </DialogActions>
         </Dialog>
       </div>
