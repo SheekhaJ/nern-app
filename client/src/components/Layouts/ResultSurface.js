@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import UserGrid from '../Results/UserGrid';
@@ -14,17 +14,32 @@ const useStyles = makeStyles(theme => ({
     section2: {
         margin: theme.spacing(2),
     },
-  }));
+}));
 
 function ResultSurface(props) {
-    const classes = useStyles();
+  const classes = useStyles();
+  const [query, setQuery] = useState('')
 
+  useEffect(() => {
+    setQuery(props.query)
+  },[props.query])
+  
     return (
       <div>
         <Paper className={classes.root}>
           <AddUser></AddUser>
           <Divider variant="middle" />
-          <Typography
+          {query
+            ? <Typography
+            component="h6"
+            variant="h5"
+            color="primary"
+            gutterBottom
+            display="block"
+          >
+            Number of results for query "{props.query}" - {props.users.length}
+          </Typography> 
+          : <Typography
             component="h6"
             variant="h5"
             color="primary"
@@ -32,7 +47,8 @@ function ResultSurface(props) {
             display="block"
           >
             Number of results - {props.users.length}
-          </Typography>
+          </Typography> 
+          }
           <div className="classes.section2">
             <UserGrid />
           </div>
@@ -43,7 +59,8 @@ function ResultSurface(props) {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.getUsers.users
+    users: state.getUsers.users,
+    query: state.getUsers.q
   };
 }
 
