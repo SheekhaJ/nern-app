@@ -8,6 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -24,6 +25,8 @@ function Result({result}) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClick = event => {
+        console.log('1) in handle click of result: ',event.currentTarget)
+        console.log('2) email linkedin github: ',email,githubUrl,linkedinUrl)
         setAnchorEl(event.currentTarget);
     };
 
@@ -40,7 +43,8 @@ function Result({result}) {
                 <CardMedia component="img" key={result.id} alt={firstName} height="180" image={process.env.PUBLIC_URL+'/profile.jpg'} title="Contemplative Reptile" />
                 <CardContent>
                     <Typography gutterBottom variant="h5" key={result.id} component="h6"> {firstName} {lastName} </Typography>
-                    <Typography variant="body2" color="textSecondary" key={result.id} component="p"> Skills: {email} </Typography>
+                    {/* <Typography variant="body2" color="textSecondary" key={result.id} component="p"> Skills: {email} </Typography> */}
+                    <Rating name="half-rating" value={3} precision={0.25} />
                 </CardContent>
             </CardActionArea>
             <CardActions key={result.id}>
