@@ -5,8 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
-import axios from 'axios';
 import LoginDialog from '../LoginDialog';
+import {connect} from 'react-redux'
+import { fetchUsers } from '../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -61,30 +62,24 @@ const useStyles = makeStyles(theme => ({
       },
 }));
 
-const baseUrl = 'http://localhost:3001';
-
-function Header() {
+function Header(props) {
     const classes = useStyles();
     const [q, setQ] = useState('')
+    const [queryResUsers, setQueryResUsers] = useState([]);
   
   const submitQuery = (q) => {
-    axios.get(baseUrl+'/query?q='+q)
-        .then((resp)=>{
-          console.log(resp);
-        })
-        .catch((error)=>{
-          console.log(error);
-        });
+    props.getQueryResultUsers(q);
   }
+
+  useEffect(() => {
+    setQueryResUsers(props.users);
+  }, [props.users])
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
             <LoginDialog />
-            {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="open drawer">  */}
-            {/* <MenuIcon /> */}
-            {/* </IconButton> */}
             <Typography className={classes.title} variant="h6" noWrap>
               Expert Recommender System
             </Typography>
@@ -115,4 +110,16 @@ function Header() {
     );
 }
 
-export default Header
+const mapStateToProps = (state) => {
+  return {
+    users: state.getUsers.users
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getQueryResultUsers: (query) => dispatch(fetchUsers(query))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (Header)
