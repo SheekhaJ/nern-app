@@ -14,9 +14,10 @@ export const GET_USER_PROFILE_REQUEST = 'GET_USER_PROFILE_REQUEST'
 export const GET_USER_PROFILE_SUCCESS = 'GET_USER_PROFILE_SUCCESS'
 export const GET_USER_PROFILE_FAILURE = 'GET_USER_PROFILE_FAILURE'
 
-function getUserResultRequest() {
+function getUserResultRequest(query) {
   return {
-    type: GET_USER_RESULT_REQUEST
+    type: GET_USER_RESULT_REQUEST,
+    payload: query
   };
 };
 
@@ -95,37 +96,69 @@ function getUserProfileFailure(error) {
   }
 }
 
-export const fetchUsers = () => {
+export const fetchUsers = (query='') => {
   return function (dispatch) {
-        dispatch(getUserResultRequest());
-        axios
-          .get(serverURL + "/users")
-          .then(response => {
-            var res = response.data.result.records;
-            var results = new Array();
+        if (query === '') {
+          dispatch(getUserResultRequest(''));
+          axios
+            .get(serverURL + "/users")
+            .then(response => {
+              var res = response.data.result.records;
+              var results = new Array();
 
-            for (var i = 0; i < res.length; i++) {
-              var r = res[i];
-              const id = r._fields[0];
-              const firstName = r._fields[1];
-              const lastName = r._fields[2];
-              const email = r._fields[3];
-              const githubUrl = r._fields[4];
-              const linkedinUrl = r._fields[5];
-              results.push([
-                id,
-                firstName,
-                lastName,
-                email,
-                githubUrl,
-                linkedinUrl
-              ]);
-            }
-            return dispatch(getUserResultSuccess(results));
-          })
-          .catch(error => {
-            return dispatch(getUserResultFailure(error));
-          });
+              for (var i = 0; i < res.length; i++) {
+                var r = res[i];
+                const id = r._fields[0];
+                const firstName = r._fields[1];
+                const lastName = r._fields[2];
+                const email = r._fields[3];
+                const githubUrl = r._fields[4];
+                const linkedinUrl = r._fields[5];
+                results.push([
+                  id,
+                  firstName,
+                  lastName,
+                  email,
+                  githubUrl,
+                  linkedinUrl
+                ]);
+              }
+              return dispatch(getUserResultSuccess(results));
+            })
+            .catch(error => {
+              return dispatch(getUserResultFailure(error));
+            });  
+        } else {
+          dispatch(getUserResultRequest(query));
+          axios
+            .get(serverURL + "/query?q=" + query)
+            .then(response => {
+              var res = response.data.result.records;
+              var results = Array();
+
+              for (var i = 0; i<res.length; i++){
+                var r = res[i];
+                const id = r._fields[0];
+                const firstName = r._fields[1];
+                const lastName = r._fields[2];
+                const email = r._fields[3];
+                const githubUrl = r._fields[4];
+                const linkedinUrl = r._fields[5];
+                results.push([
+                  id,
+                  firstName,
+                  lastName,
+                  email,
+                  githubUrl,
+                  linkedinUrl
+                ]);
+              }
+              return dispatch(getUserResultSuccess(results));
+            })
+            .catch(error => {
+              return dispatch(getUserResultFailure(error))
+            });
+        }
     }
 }
 
