@@ -14,9 +14,8 @@ const useStyles = makeStyles(theme => ({
 function UserGrid(props) {
     const [spacing, setSpacing] = useState(6);
     const classes = useStyles();
-    var users;
-
-    useEffect(()=>{
+    
+    useEffect(() => {
         props.fetchUsersAction();
     }, []);
     
@@ -37,7 +36,7 @@ function UserGrid(props) {
         
 const mapStateToProps = (state) => {
     return {
-        ...state.users
+        users: state.getUsers.users
     }
 }
 
