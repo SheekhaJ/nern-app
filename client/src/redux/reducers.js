@@ -4,9 +4,10 @@ import { ADD_NEW_USER_POST_REQUEST } from './actions'
 import {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS} from './actions'
 
 const initState = {
-    loading: true,
-    users: [],
-    error: ''
+  loading: true,
+  q: '',
+  users: [],
+  error: ''
 }
 
 const userResultReducer = (state = initState, action) => {
@@ -14,14 +15,15 @@ const userResultReducer = (state = initState, action) => {
     case GET_USER_RESULT_REQUEST:
       return {
         ...state,
-        loading: true
+        loading: true,
+        q: action.payload
       };
 
     case GET_USER_RESULT_SUCCESS:
       return {
         ...state,
         loading: false,
-        users: action.payload.map(e=>e),
+        users: action.payload,
         error: ""
       };
 
@@ -66,7 +68,7 @@ const loginUserReducer = (state = {loggedIn: false, loggedInUser: '', loginError
     case LOGIN_USER_FAILURE:
       return {
         ...state,
-        loggedIn: true,
+        loggedIn: false,
         loggedInUser: null,
         loginError: action.payload
       }
@@ -76,7 +78,7 @@ const loginUserReducer = (state = {loggedIn: false, loggedInUser: '', loginError
 }
 
 const rootReducer = combineReducers({
-  users: userResultReducer,
+  getUsers: userResultReducer,
   loginUser: loginUserReducer,
   addUser: addUserReducer
 });
