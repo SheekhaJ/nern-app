@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -68,15 +67,15 @@ function Header() {
     const classes = useStyles();
     const [q, setQ] = useState('')
   
-    useEffect(()=>{
-        axios.get(baseUrl+'/query?q='+q)
+  const submitQuery = (q) => {
+    axios.get(baseUrl+'/query?q='+q)
         .then((resp)=>{
           console.log(resp);
         })
         .catch((error)=>{
           console.log(error);
         });
-    }, [q])
+  }
 
     return (
       <div className={classes.root}>
@@ -102,6 +101,11 @@ function Header() {
                 inputProps={{ "aria-label": "search" }}
                 onChange={e => {
                   setQ(e.target.value);
+                }}
+                onKeyPress={e => {
+                    if (e.key === 'Enter') {
+                      submitQuery(q);
+                    }
                 }}
               />
             </div>
