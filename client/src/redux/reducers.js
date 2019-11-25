@@ -1,16 +1,17 @@
 import { combineReducers } from 'redux'
 import {GET_USER_RESULT_REQUEST, GET_USER_RESULT_SUCCESS, GET_USER_RESULT_FAILURE, LOGIN_USER_FAILURE} from './actions'
 import { ADD_NEW_USER_POST_REQUEST } from './actions'
-import {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS} from './actions'
+import { LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS } from './actions'
+import { GET_USER_PROFILE_REQUEST, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE } from './actions'
 
-const initState = {
+const initUserResultState = {
   loading: true,
   q: '',
   users: [],
   error: ''
 }
 
-const userResultReducer = (state = initState, action) => {
+const userResultReducer = (state = initUserResultState, action) => {
   switch (action.type) {
     case GET_USER_RESULT_REQUEST:
       return {
@@ -77,9 +78,32 @@ const loginUserReducer = (state = {loggedIn: false, loggedInUser: '', loginError
   }
 }
 
+const userProfileReducer = (state = { userid: '', userProfile: [],  userProfileError: ''}, action) => {
+  switch (action.type) {
+    case GET_USER_PROFILE_REQUEST:
+      return {
+        ...state, 
+        userid: action.payload
+      }
+    case GET_USER_PROFILE_SUCCESS:
+      return {
+        ...state,
+        userProfile: action.payload
+      }
+    case GET_USER_PROFILE_FAILURE:
+      return {
+        ...state,
+        userProfileError: action.payload
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   getUsers: userResultReducer,
   loginUser: loginUserReducer,
-  addUser: addUserReducer
+  addUser: addUserReducer,
+  getUserProfile: userProfileReducer
 });
 export default rootReducer
