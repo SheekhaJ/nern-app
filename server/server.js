@@ -69,7 +69,7 @@ router.get('/query', (req,res)=>{
             session.close();
             return res.json({result})
         }).catch(function(error){
-            console.log('skills error: '+error);
+            console.log('query error: '+error);
         })
     } else {
         res.json({res: q});
@@ -103,6 +103,46 @@ router.post('/adduser', (req, res) => {
         return res.json({ result });
     });
 })
+
+router.post("/user", (req, res) => {
+    userid = req.body.payload;
+    // userid = 14;
+    console.log('userid is "' + userid + '"');
+    // if (userid != "") {
+      session
+        .readTransaction(function(transaction) {
+          var result = transaction.run(
+            "match (u:user{id:'"+userid+"'})-[r]-(f) return u,r,f"
+          );
+          return result;
+        })
+        .then(function(result) {
+            console.log('profile result from server: ', result);
+            return res.json(result);
+        })
+        .catch(function(error) {
+          console.log("get user profile error 3213: " + error);
+        }).finally((result) => {
+            session.close();
+        });
+    // } else {
+    //   res.json({ res: q });
+    // }
+  // session
+  //   .readTransaction(function(transaction) {
+  //     var result = transaction.run(
+  //       "match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc"
+  //     );
+  //     return result;
+  //   })
+  //   .then(function(result) {
+  //     session.close();
+  //     return res.json({ result });
+  //   })
+  //   .catch(function(error) {
+  //     console.log("users error: " + error);
+  //   });
+});
 
 driver.close()
 
