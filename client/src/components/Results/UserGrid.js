@@ -14,10 +14,20 @@ const useStyles = makeStyles(theme => ({
 function UserGrid(props) {
     const [spacing, setSpacing] = useState(6);
     const classes = useStyles();
+    const [userprofileid, setUserprofileid] = useState('');
     
     useEffect(() => {
         props.fetchUsersAction();
     }, []);
+
+    useEffect(() => {
+        props.usergridProfileIdCallback(userprofileid);
+    },[userprofileid])
+
+    const getUserprofileid = (profileUseridFromResult) => {
+        console.log('in usergrid profileid: ', profileUseridFromResult);
+        setUserprofileid(profileUseridFromResult);
+    }
     
     return (
         <Grid container className={classes.root} justify="center" spacing={10}>
@@ -25,7 +35,7 @@ function UserGrid(props) {
                 <Grid container justify="center" spacing={spacing}>
                    {props.users && props.users.map(result => (
                         <Grid key={result.id} item>
-                            <Result key={result.id} result={result}></Result>
+                            <Result key={result.id} result={result} usergridProfileIdCallback={getUserprofileid}></Result>
                         </Grid>
                     ))}
                 </Grid>
