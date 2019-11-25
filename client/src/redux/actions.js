@@ -82,10 +82,10 @@ function getUserProfileRequest(userid) {
   }
 }
 
-function getUserProfileSuccess(user) {
+function getUserProfileSuccess(userDetails) {
   return {
     type: GET_USER_PROFILE_SUCCESS,
-    payload: user
+    payload: userDetails
   }
 }
 
@@ -104,7 +104,7 @@ export const fetchUsers = (query='') => {
             .get(serverURL + "/users")
             .then(response => {
               var res = response.data.result.records;
-              var results = new Array();
+              var results = []
 
               for (var i = 0; i < res.length; i++) {
                 var r = res[i];
@@ -134,7 +134,7 @@ export const fetchUsers = (query='') => {
             .get(serverURL + "/query?q=" + query)
             .then(response => {
               var res = response.data.result.records;
-              var results = Array();
+              var results = []
 
               for (var i = 0; i<res.length; i++){
                 var r = res[i];
@@ -196,7 +196,55 @@ export const loginUser = (email) => {
 
 export const getUserProfile = (userid) => {
   return function (dispatch) {
+    console.log('1) userid here is ',userid)
     dispatch(getUserProfileRequest(userid));
+    axios
+      .post(serverURL + '/user', { payload: userid })
+      .then(response => {
+        // console.log('response in getuserprofile in actions.js: ',response)
+        var res = response.data.records;
+        
+        var userProfileInfo = null;
+        if (res[0]._fields[0].labels[0] === "user") {
+          var properties = res[0]._fields[0].properties;
+          userProfileInfo = {
+            firstName: properties.firstName,
+            lastName: properties.lastName,
+            email: properties.email,
+            githubUrl: properties.githubUrl,
+            linkedinUrl: properties.linkedinUrl
+          }
+        }
 
+        var friendsInfo = []
+        var languagesInfo = []
+        for (var i = 0; i < res.length; i++){
+          var r = res[i];
+          if (r._fields[1].type === "friendOf") {
+            var properties = r._fields[2].properties;
+            var friend = {
+              firstName: properties.firstName,
+              lastName: properties.lastName,
+              email: properties.email,
+              githubUrl: properties.githubUrl,
+              linkedinUrl: properties.linkedinUrl
+            };
+            friendsInfo.push(friend);
+          } else if (r._fields[1].type === "knows") {
+            var properties = r._fields[2].properties;
+            languagesInfo.push(properties.name)
+          }
+        }
+
+        var userProfileBundle = {
+          profileInfo: userProfileInfo,
+          friends: friendsInfo,
+          languages: languagesInfo
+        }
+        return dispatch(getUserProfileSuccess(userProfileBundle));
+      }).catch(error => {
+        console.log("get user profile error: ", error);
+        return dispatch(getUserProfileFailure(error));
+      });
   }
 }
