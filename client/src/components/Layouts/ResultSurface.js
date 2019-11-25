@@ -19,38 +19,45 @@ const useStyles = makeStyles(theme => ({
 function ResultSurface(props) {
   const classes = useStyles();
   const [query, setQuery] = useState('')
+  const [profileuserid, setProfileuserid] = useState('')
 
   useEffect(() => {
     setQuery(props.query)
   },[props.query])
+
+  const getUserprofileid = (userid) => {
+    console.log('in resultsurface userid: ', userid);
+    props.profileid(userid)
+  }
   
     return (
       <div>
         <Paper className={classes.root}>
           <AddUser></AddUser>
           <Divider variant="middle" />
-          {query
-            ? <Typography
-            component="h6"
-            variant="h5"
-            color="primary"
-            gutterBottom
-            display="block"
-          >
-            Number of results for query "{props.query}" - {props.users.length}
-          </Typography> 
-          : <Typography
-            component="h6"
-            variant="h5"
-            color="primary"
-            gutterBottom
-            display="block"
-          >
-            Number of results - {props.users.length}
-          </Typography> 
-          }
+          {query ? (
+            <Typography
+              component="h6"
+              variant="h5"
+              color="primary"
+              gutterBottom
+              display="block"
+            >
+              Number of results for query "{props.query}" - {props.users.length}
+            </Typography>
+          ) : (
+            <Typography
+              component="h6"
+              variant="h5"
+              color="primary"
+              gutterBottom
+              display="block"
+            >
+              Number of results - {props.users.length}
+            </Typography>
+          )}
           <div className="classes.section2">
-            <UserGrid />
+            <UserGrid usergridProfileIdCallback={getUserprofileid} />
           </div>
         </Paper>
       </div>
