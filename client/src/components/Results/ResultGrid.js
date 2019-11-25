@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Result from './Result'
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResultGrid() {
-    const [spacing, setSpacing] = React.useState(2);
+    const [spacing, setSpacing] = useState(2);
     const classes = useStyles();
 
     return (
