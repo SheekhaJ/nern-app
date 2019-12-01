@@ -217,7 +217,7 @@ export const getUserProfile = (userid) => {
         }
 
         var friendsInfo = new Map()
-        var languagesInfo = new Set()
+        var languagesInfo = new Array()
         for (var i = 0; i < res.length; i++){
           var r = res[i];
           if (r._fields[1].type === "friendOf") {
@@ -229,14 +229,14 @@ export const getUserProfile = (userid) => {
             friendInfo['githubUrl'] = properties.githubUrl;
             friendInfo['linkedinUrl'] = properties.linkedinUrl;
             
-            console.log('friendsInfo: ', friendInfo);
             friendsInfo.set(friendInfo['firstName'] + friendInfo['lastName'],friendInfo);
           } else if (r._fields[1].type === "knows") {
             var properties = r._fields[2].properties;
-            languagesInfo.add(properties.name)
+            if (!languagesInfo.includes(properties.name))
+              languagesInfo.push(properties.name)
           }
         }
-        console.log("friendsInfo: ", friendsInfo);
+        // console.log("friendsInfo: ", friendsInfo);
 
         var userProfileBundle = {
           profileInfo: userProfileInfo,

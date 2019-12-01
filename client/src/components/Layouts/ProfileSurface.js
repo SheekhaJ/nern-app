@@ -5,8 +5,11 @@ import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Button from "@material-ui/core/Button";
 import { connect } from 'react-redux';
 import { getUserProfile } from "../../redux/actions";
+import { IconButton } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,11 +37,29 @@ function ProfileSurface(props) {
     props.getUserProfile(props.profileid);
   }, [])
 
-  useEffect(() => {
-    console.log("after props.userprofileinfo of profile surface: ", props.userProfileInfo);
-  },[props.userProfileInfo])
+  // useEffect(() => {
+  //   console.log("after props.userprofileinfo of profile surface: ", props.userProfileInfo);
+  // },[props.userProfileInfo])
 
-    return (
+  useEffect(() => {
+    console.log("a) inside useeffect in profilesurface - initial userprofileid: ", userprofileid);
+    // setUserprofileid(0)
+    // setFriends(props.friendsInfo)
+    console.log(
+      "b) inside useeffect in profilesurface - final userprofileid: ",
+      userprofileid, friends
+    );
+  }, [userprofileid]);
+
+  return (
+    <div>
+      <IconButton aria-label='back' onClick={() => {
+        console.log('back button has been clicked on profile!',);
+        // setUserprofileid(0);
+        console.log('after userprofileid: ', userprofileid);
+      }}>
+        <ArrowBackIcon></ArrowBackIcon>
+      </IconButton>
       <div>
         {props.userProfileInfo && props.friendsInfo && props.languageInfo && (
           <Grid
@@ -77,21 +98,28 @@ function ProfileSurface(props) {
 
               <Grid item xs={8} justify="flex-start">
                 <Typography gutterBottom variant="h5" component="h6">
-                  Languages:{JSON.stringify(props.languageInfo)}
+                  {/* Languages:{(props.languageInfo)} */}
+                  Languages: {props.languageInfo.map((language) => (
+                    <Typography>{language}</Typography>
+                  ))}
                 </Typography>
                 <Divider variant="middle" orientation="horizontal" />
               </Grid>
 
               <Grid item xs={8} justify="flex-start">
                 <Typography gutterBottom variant="h5" component="h6">
-                  Friends:{JSON.stringify(props.friendsInfo)}
+                  Friends:{props.friendsInfo}
+                  {/* {Object.keys(props.friendsInfo).map((friend) => (
+                    <Button>{friend['firstName']}</Button>
+                  ))} */}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
         )}
       </div>
-    );
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => {
