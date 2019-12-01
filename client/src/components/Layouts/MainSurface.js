@@ -1,22 +1,22 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Header } from "./index";
 import ResultSurface from "./ResultSurface";
 import ProfileSurface from "./ProfileSurface";
 
 function MainSurface(props) {
   const [profileUserid, setProfileUserid] = useState();
-  
-  const getUseridForProfile = (userid) => {
-    console.log('In mainsurface userid: ', userid);
-    setProfileUserid((userid) => {console.log('inside setstate: ',userid,profileUserid)});
+
+  useEffect(() => {
+    setProfileUserid(profileUserid);
     console.log('profileuserid in main surface: ', profileUserid);
-    };
+  }, [profileUserid]);
       
     return (
       <div>
         <Header />
-        {!profileUserid && <ResultSurface profileid={getUseridForProfile} />}
-        {/* { <ProfileSurface profileid={17} />} */}
+        {/* {!profileUserid && <ResultSurface profileid={getUseridForProfile} />} */}
+        {!profileUserid && <ResultSurface profileid={(userid) => {setProfileUserid(userid)}} />}
+        {/* { <ProfileSurface profileid={18} />} */}
         {profileUserid && <ProfileSurface profileid={profileUserid} />}
       </div>
     );
