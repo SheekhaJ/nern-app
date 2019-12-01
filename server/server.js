@@ -117,7 +117,7 @@ router.post("/user", (req, res) => {
           return result;
         })
         .then(function(result) {
-            console.log('profile result from server: ', result);
+            // console.log('profile result from server: ', result);
             return res.json(result);
         })
         .catch(function(error) {
