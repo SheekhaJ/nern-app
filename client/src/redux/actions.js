@@ -223,13 +223,15 @@ export const getUserProfile = (userid) => {
           if (r._fields[1].type === "friendOf") {
             var properties = r._fields[2].properties;
             var friendInfo = new Map()
+            friendInfo['id'] = properties.id;
             friendInfo['firstName'] = properties.firstName;
             friendInfo['lastName'] = properties.lastName;
             friendInfo['email'] = properties.email;
             friendInfo['githubUrl'] = properties.githubUrl;
             friendInfo['linkedinUrl'] = properties.linkedinUrl;
             
-            friendsInfo.set(friendInfo['firstName'] + friendInfo['lastName'],friendInfo);
+            // friendsInfo.set(friendInfo['firstName'] + friendInfo['lastName'],friendInfo);
+            friendsInfo.set(friendInfo['id'], friendInfo);
           } else if (r._fields[1].type === "knows") {
             var properties = r._fields[2].properties;
             if (!languagesInfo.includes(properties.name))

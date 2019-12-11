@@ -33,23 +33,16 @@ function ProfileSurface(props) {
   const [languages, setLanguages] = useState(props.languagesInfo);
   
   useEffect(() => {
-    console.log('inside useeffect of profile surface: ',props.profileid)
-    props.getUserProfile(props.profileid);
+    // console.log('inside useeffect of profile surface: ', props.profileid)
+    props.getUserProfile(userprofileid);
   }, [])
 
-  // useEffect(() => {
-  //   console.log("after props.userprofileinfo of profile surface: ", props.userProfileInfo);
-  // },[props.userProfileInfo])
-
   useEffect(() => {
-    console.log("a) inside useeffect in profilesurface - initial userprofileid: ", userprofileid);
-    // setUserprofileid(0)
-    // setFriends(props.friendsInfo)
-    console.log(
-      "b) inside useeffect in profilesurface - final userprofileid: ",
-      userprofileid, friends
-    );
-  }, [userprofileid]);
+    console.log("inside useeffect in profilesurface  ", props.friendsInfo);
+    for (const [key, val] of new Map(props.friendsInfo).entries()) {
+      console.log('friend: ',key,val)
+    }
+  }, [props.friendsInfo]);
 
   return (
     <div>
@@ -98,7 +91,6 @@ function ProfileSurface(props) {
 
               <Grid item xs={8} justify="flex-start">
                 <Typography gutterBottom variant="h5" component="h6">
-                  {/* Languages:{(props.languageInfo)} */}
                   Languages: {props.languageInfo.map((language) => (
                     <Typography>{language}</Typography>
                   ))}
@@ -108,8 +100,9 @@ function ProfileSurface(props) {
 
               <Grid item xs={8} justify="flex-start">
                 <Typography gutterBottom variant="h5" component="h6">
-                  Friends:{props.friendsInfo}
-                  {/* {Object.keys(props.friendsInfo).map((friend) => (
+                  Friends : {props.friendsInfo}
+                  {/* Friends: 
+                  {props.friendsInfo.map((friend) => (
                     <Button>{friend['firstName']}</Button>
                   ))} */}
                 </Typography>
