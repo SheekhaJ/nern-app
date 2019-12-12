@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
 import { getUserProfile } from "../../redux/actions";
-import { IconButton } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import Profile from '../Profile';
 
 
 function ProfileSurface(props) {
   const [userprofileid, setUserprofileid] = useState(props.profileid);
-  const [profileInfo, setProfileInfo] = useState([]);
+  // const [profileInfo, setProfileInfo] = useState([]);
   const [friends, setFriends] = useState([])
   const [languages, setLanguages] = useState([])
   
@@ -17,7 +17,6 @@ function ProfileSurface(props) {
   }, [])
 
   useEffect(() => {
-    console.log('initial friends: ',friends)
     var _friends = []
     if (props.friendsInfo) {
       props.friendsInfo.forEach(f => {
@@ -41,12 +40,12 @@ function ProfileSurface(props) {
     }
   }, [props.languages]);
   
-  // useEffect(() => {
-  //   console.log('after setting languages: ',languages)
-  // }, [languages])
+  useEffect(() => {
+    console.log('after setting languages: ',languages)
+  }, [languages])
 
-  // console.log('initial friends: ',friends )
-
+  console.log('initial friends: ',props.friendsInfo, props.userProfileInfo, props.languageInfo)
+  
   return (
     <div>
       <IconButton aria-label='back' onClick={() => {
@@ -56,7 +55,10 @@ function ProfileSurface(props) {
       }}>
         <ArrowBackIcon></ArrowBackIcon>
       </IconButton>
-      {friends !== [] && languages !== [] && <Profile userprofileid={userprofileid} friends={friends} languages={languages}></Profile>}
+      {
+        props.userProfileInfo && props.friendsInfo && props.languageInfo && 
+        <Profile userprofileid={userprofileid} userProfile={props.userProfileInfo} friends={props.friendsInfo} languages={props.languageInfo}></Profile>
+      }
     </div>
   );
 }
