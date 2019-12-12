@@ -7,7 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import getUserProfile from '../redux/actions'
+import { connect } from 'react-redux';
+import { fetchUsers } from '../redux/actions';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -26,14 +28,38 @@ const useStyles = makeStyles(theme => ({
 
 function Profile(props) {
     const classes = useStyles();
+    
+    const [q, setQ] = useState('')
+    const [queryResUsers, setQueryResUsers] = useState([]);
+
     const userProfileInfo = Object.assign({}, props.userProfile)
     const languages = Object.assign([], props.languages)
-    // const friends = Object.assign(new Map(), props.friends)
-    const friends = props.friends
+    const friends = Object.assign(new Map(), props.friends)
+    // const friends = Object.assign({}, props.friends)
     // const [firstName, lastName, email, githubUrl, linkedinUrl] = userProfileInfo
     // const [friends, setFriends] = useState(props.friends);
     // const [languages, setLanguages] = useState(props.languages);
-    console.log('in profile: ',friends)
+
+    const handleLanguageClick = (query) => {
+        console.log('query: ', query)
+        // setQ(q)
+        // console.log('query: ', q)
+        props.getQueryResultUsers(query);
+    }
+
+    useEffect(() => {
+        // setQueryResUsers(props.users);
+        var resUsers = []
+        if (props.users) {
+            props.users.forEach(user => {
+                resUsers.push()
+            })
+            setQueryResUsers(resUsers)
+        }
+        console.log('result users from backend: ', queryResUsers);
+    }, [props.users])
+
+    // console.log('in profile: ',typeof friends)
     return (
         <div>
             {userProfileInfo && friends && languages && (
@@ -56,7 +82,6 @@ function Profile(props) {
                             className={classes.bigAvatar}
                         />
                     </Grid>
-                    {props.userprofileid}
                     <Grid item xs={8}>
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
@@ -74,33 +99,24 @@ function Profile(props) {
 
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                {/* Languages: {languages} */}
                                 Languages: {languages.map((language) => (
-                                    <Typography>{language}</Typography>
+                                    // <Button color="primary" >{language}</Button>
+                                    <div>
+                                        <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
+                                    </div>
                                 ))}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
-                        <Grid item xs={8} justify="flex-start">
+                        {/* <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                Friends: {friends} 
-                                {/* Friends : {props.friendsInfo.forEach(f => {
-                                    console.log('render id ', f['id'])
-                                    return <>{`${f['firstName']} ,`}</>
-                                })}
-                                {/* {profileInfo && profileInfo.forEach(f => {
-                    return <>{`| ${f['lastName']} ,`}</>
-                  })} */}
-                                {/* Friends: 
-                  {friends.map((friend) => (
-                    <Button>{friend['firstName']}</Button>
-                  ))} */}
-                                {/* Friends: {props.friendsInfo && props.friendsInfo.map([],).map((info) => {
-                    console.log('inside component ',info) */}
-                                {/* })} */}
-                </Typography>
-                        </Grid>
+                                Friends: {friends}  */}
+                                {/* Friends: {friends.forEach(element => (
+                                    // console.log('friend: ', friend);
+                                <Typography> {element} </Typography> ))} */}
+                            {/* </Typography>
+                        </Grid> */}
                     </Grid>
                 </Grid>
             )}
@@ -108,22 +124,18 @@ function Profile(props) {
     )
 }
 
-// const mapStateToProps = (state) => {
-//     return {
-//         id: state.user.profileid,
-//         firstName: state.user.firstName,
-//         lastName: state.user.lastName,
-//         email: state.user.email,
-//         githubUrl: state.user.githubUrl,
-//         linkedinUrl: state.user.linkedinUrl
-//     }
-// }
+const mapStateToProps = (state) => {
+    console.log('result users: ', state.getUsers.users);
+    return {
+        users: state.getUsers.users
+    }
+}
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         getUserProfile: dispatch(getUserProfile())
-//     }
-// }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getQueryResultUsers: (query) => dispatch(fetchUsers(query))
+    }
+}
 
-// export default connect(mapStateToProps, mapDispatchToProps)(Profile)
-export default Profile
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
+// export default Profile
