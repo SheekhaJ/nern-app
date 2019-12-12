@@ -103,6 +103,7 @@ function Profile(props) {
                                     // <Button color="primary" >{language}</Button>
                                     <div>
                                         <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
+                                        <Rating name="half-rating" value={3.25} precision={0.25} />
                                     </div>
                                 ))}
                             </Typography>
