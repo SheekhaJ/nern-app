@@ -26,14 +26,18 @@ const useStyles = makeStyles(theme => ({
 
 function Profile(props) {
     const classes = useStyles();
-    const [profileInfo, setProfileInfo] = useState({firstName: props.firstName, lastName: props.lastName, email: props.email});
-    const [friends, setFriends] = useState(props.friends);
-    const [languages, setLanguages] = useState(props.languages);
-
-    console.log('friends in profile component: ', friends);
+    const userProfileInfo = Object.assign({}, props.userProfile)
+    const languages = Object.assign([], props.languages)
+    // const friends = Object.assign(new Map(), props.friends)
+    const friends = props.friends
+    // const [firstName, lastName, email, githubUrl, linkedinUrl] = userProfileInfo
+    // const [friends, setFriends] = useState(props.friends);
+    // const [languages, setLanguages] = useState(props.languages);
+    console.log('in profile: ',friends)
     return (
         <div>
-            {profileInfo && friends && languages && (
+            {userProfileInfo && friends && languages && (
+            // {userProfileInfo && languages && (
                 <Grid
                     container
                     spacing={3}
@@ -56,42 +60,40 @@ function Profile(props) {
                     <Grid item xs={8}>
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                {/* First Name:{props.userProfileInfo["firstName"]} */}
-                                First Name: 
+                                First Name:{userProfileInfo['firstName']}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                {/* Last Name:{props.userProfileInfo["lastName"]} */}
-                                Last Name: {profileInfo['lastName']}
+                                Last Name:{userProfileInfo['lastName']}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                {/* Languages: {props.languageInfo.map((language) => (
+                                {/* Languages: {languages} */}
+                                Languages: {languages.map((language) => (
                                     <Typography>{language}</Typography>
-                                ))} */}
-                                Languages: {languages}
+                                ))}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                Friends: {friends}
+                                Friends: {friends} 
                                 {/* Friends : {props.friendsInfo.forEach(f => {
                                     console.log('render id ', f['id'])
                                     return <>{`${f['firstName']} ,`}</>
-                                })} */}
+                                })}
                                 {/* {profileInfo && profileInfo.forEach(f => {
                     return <>{`| ${f['lastName']} ,`}</>
                   })} */}
                                 {/* Friends: 
-                  {props.friendsInfo.map((friend) => (
+                  {friends.map((friend) => (
                     <Button>{friend['firstName']}</Button>
                   ))} */}
                                 {/* Friends: {props.friendsInfo && props.friendsInfo.map([],).map((info) => {
