@@ -40,12 +40,12 @@ function LoginDialog(props) {
   };
 
   useEffect(() => {
-    sessionStorage.setItem('eruid', props.uid)
-    sessionStorage.setItem('erAuthFirstName', props.fname);
-    sessionStorage.setItem('erAuthLastName', props.lname);
-    setLoggedUserID(sessionStorage.getItem('eruid'));
-    setLoggedUserFirstName(sessionStorage.getItem('erAuthFirstName'));
-    setLoggedUserLastName(sessionStorage.getItem('erAuthLastName'));
+    localStorage.setItem('eruid', props.uid)
+    localStorage.setItem('erAuthFirstName', props.fname);
+    localStorage.setItem('erAuthLastName', props.lname);
+    setLoggedUserID(localStorage.getItem('eruid'));
+    setLoggedUserFirstName(localStorage.getItem('erAuthFirstName'));
+    setLoggedUserLastName(localStorage.getItem('erAuthLastName'));
   }, [props.uid, props.fname, props.lname]);
 
     return (
