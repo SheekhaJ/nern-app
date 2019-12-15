@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-// import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
@@ -34,17 +33,17 @@ function Profile(props) {
 
     const userProfileInfo = Object.assign({}, props.userProfile)
     const languages = Object.assign([], props.languages)
-    const friends = Object.assign(new Map(), props.friends)
-    // const friends = Object.assign({}, props.friends)
-    // const [firstName, lastName, email, githubUrl, linkedinUrl] = userProfileInfo
-    // const [friends, setFriends] = useState(props.friends);
-    // const [languages, setLanguages] = useState(props.languages);
+    
+    var friends = new Map();
+    props.friends.forEach((value, key, map) => {
+        friends[key] = value
+    })
 
     const handleLanguageClick = (query) => {
         console.log('query: ', query)
         // setQ(q)
         // console.log('query: ', q)
-        props.getQueryResultUsers(query);
+        // props.getQueryResultUsers(query);
     }
 
     useEffect(() => {
@@ -59,11 +58,9 @@ function Profile(props) {
         console.log('result users from backend: ', queryResUsers);
     }, [props.users])
 
-    // console.log('in profile: ',typeof friends)
     return (
         <div>
             {userProfileInfo && friends && languages && (
-            // {userProfileInfo && languages && (
                 <Grid
                     container
                     spacing={3}
@@ -100,7 +97,6 @@ function Profile(props) {
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
                                 Languages: {languages.map((language) => (
-                                    // <Button color="primary" >{language}</Button>
                                     <div>
                                         <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
                                         <Rating name="half-rating" value={3.25} precision={0.25} />
@@ -110,14 +106,13 @@ function Profile(props) {
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
-                        {/* <Grid item xs={8} justify="flex-start">
+                        <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                Friends: {friends}  */}
-                                {/* Friends: {friends.forEach(element => (
-                                    // console.log('friend: ', friend);
-                                <Typography> {element} </Typography> ))} */}
-                            {/* </Typography>
-                        </Grid> */}
+                                Friends: {Object.keys(friends).map((key) => (
+                                    <Button color='primary' variant='outlined' >{friends[key]['firstName']} {friends[key]['lastName']} </Button>
+                                ))}
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </Grid>
             )}
