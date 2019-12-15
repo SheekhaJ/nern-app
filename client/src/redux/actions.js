@@ -196,7 +196,6 @@ export const loginUser = (email) => {
 
 export const getUserProfile = (userid) => {
   return function (dispatch) {
-    console.log('1) userid here is ',userid)
     dispatch(getUserProfileRequest(userid));
     axios
       .post(serverURL + '/user', { payload: userid })
@@ -207,13 +206,19 @@ export const getUserProfile = (userid) => {
         var userProfileInfo = null;
         if (res[0]._fields[0].labels[0] === "user") {
           var properties = res[0]._fields[0].properties;
-          userProfileInfo = {
-            firstName: properties.firstName,
-            lastName: properties.lastName,
-            email: properties.email,
-            githubUrl: properties.githubUrl,
-            linkedinUrl: properties.linkedinUrl
-          }
+          var userProfileInfo = new Map();
+          // userProfileInfo = {
+          //   firstName: properties.firstName,
+          //   lastName: properties.lastName,
+          //   email: properties.email,
+          //   githubUrl: properties.githubUrl,
+          //   linkedinUrl: properties.linkedinUrl
+          // }
+          userProfileInfo['firstName'] = properties.firstName
+          userProfileInfo['lastName'] = properties.lastName
+          userProfileInfo['email'] = properties.email
+          userProfileInfo['githubUrl'] = properties.githubUrl
+          userProfileInfo['linkedinUrl'] = properties.linkedinUrl
         }
 
         var friendsInfo = new Map()
@@ -223,15 +228,13 @@ export const getUserProfile = (userid) => {
           if (r._fields[1].type === "friendOf") {
             var properties = r._fields[2].properties;
             var friendInfo = new Map()
-            friendInfo['id'] = properties.id;
             friendInfo['firstName'] = properties.firstName;
             friendInfo['lastName'] = properties.lastName;
             friendInfo['email'] = properties.email;
             friendInfo['githubUrl'] = properties.githubUrl;
             friendInfo['linkedinUrl'] = properties.linkedinUrl;
             
-            // friendsInfo.set(friendInfo['firstName'] + friendInfo['lastName'],friendInfo);
-            friendsInfo.set(friendInfo['id'], friendInfo);
+            friendsInfo.set(properties.id, friendInfo);
           } else if (r._fields[1].type === "knows") {
             var properties = r._fields[2].properties;
             if (!languagesInfo.includes(properties.name))
