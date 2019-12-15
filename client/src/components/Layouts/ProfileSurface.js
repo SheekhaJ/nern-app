@@ -8,9 +8,6 @@ import Profile from '../Profile';
 
 function ProfileSurface(props) {
   const [userprofileid, setUserprofileid] = useState(props.profileid);
-  // const [profileInfo, setProfileInfo] = useState([]);
-  const [friends, setFriends] = useState([])
-  const [languages, setLanguages] = useState([])
   
   useEffect(() => {
     props.getUserProfile(props.profileid);
@@ -27,10 +24,6 @@ function ProfileSurface(props) {
   }, [props.friendsInfo]);
 
   useEffect(() => {
-    console.log('after setting friends: ', friends)
-  }, [friends])
-
-  useEffect(() => {
     var _languages = []
     if (props.languages) {
       props.languages.forEach((language) => {
@@ -39,12 +32,6 @@ function ProfileSurface(props) {
       setLanguages(_languages);
     }
   }, [props.languages]);
-  
-  useEffect(() => {
-    console.log('after setting languages: ',languages)
-  }, [languages])
-
-  console.log('initial friends: ',props.friendsInfo, props.userProfileInfo, props.languageInfo)
   
   return (
     <div>
