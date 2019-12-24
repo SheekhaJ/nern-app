@@ -39,12 +39,17 @@ function Profile(props) {
     })
 
     const handleLanguageClick = (query) => {
-        console.log('language query: ', query)
+        console.log('language query: ', query);
+        props.getQueryResultUsers(query);
     }
 
     useEffect(() => {
         props.usergridProfileIdCallback(userprofileid);
     }, [userprofileid])
+
+    useEffect(() => {
+        console.log('result users from query: ', props.users);
+    }, [props.users])
 
     return (
         <div>
