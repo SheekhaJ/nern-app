@@ -68,6 +68,7 @@ function Header(props) {
     const [queryResUsers, setQueryResUsers] = useState([]);
   
   const submitQuery = (q) => {
+    console.log('query: ',q)
     props.getQueryResultUsers(q);
   }
 

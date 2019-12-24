@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
 import { getUserProfile } from "../../redux/actions";
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import Profile from '../Profile';
 
 
@@ -13,26 +13,16 @@ function ProfileSurface(props) {
     props.getUserProfile(props.profileid);
   }, [])
 
-  useEffect(() => {
-    var _friends = []
-    if (props.friendsInfo) {
-      props.friendsInfo.forEach(f => {
-        _friends.push(f)
-      })
-      setFriends(_friends)
-    }
-  }, [props.friendsInfo]);
+  // useEffect(() => {
+  //   console.log('props.profileid has changed: ', props.profileid);
+  //   console.log('userprofileid has changed: ', userprofileid);
+  // }, [userprofileid])
 
-  useEffect(() => {
-    var _languages = []
-    if (props.languages) {
-      props.languages.forEach((language) => {
-        _languages.push(language)
-      })
-      setLanguages(_languages);
-    }
-  }, [props.languages]);
-  
+  const handleProfileClick = (profileidfromclick) => {
+    console.log('profileid from click - ',profileidfromclick)
+    props.getUserProfile(profileidfromclick)
+  }
+
   return (
     <div>
       <IconButton aria-label='back' onClick={() => {
@@ -44,7 +34,8 @@ function ProfileSurface(props) {
       </IconButton>
       {
         props.userProfileInfo && props.friendsInfo && props.languageInfo && 
-        <Profile userprofileid={userprofileid} userProfile={props.userProfileInfo} friends={props.friendsInfo} languages={props.languageInfo}></Profile>
+        <Profile userprofileid={userprofileid} userProfile={props.userProfileInfo} friends={props.friendsInfo} languages={props.languageInfo}
+          usergridProfileIdCallback = {handleProfileClick}></Profile>
       }
     </div>
   );

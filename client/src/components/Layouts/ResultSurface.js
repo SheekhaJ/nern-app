@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
 function ResultSurface(props) {
   const classes = useStyles();
   const [query, setQuery] = useState('')
-  const [profileuserid, setProfileuserid] = useState('')
 
   useEffect(() => {
     setQuery(props.query)
