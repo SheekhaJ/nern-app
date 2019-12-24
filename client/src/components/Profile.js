@@ -28,35 +28,23 @@ const useStyles = makeStyles(theme => ({
 function Profile(props) {
     const classes = useStyles();
     
-    const [q, setQ] = useState('')
-    const [queryResUsers, setQueryResUsers] = useState([]);
+    const [userprofileid, setUserprofileid] = useState(props.userprofileid);
 
     const userProfileInfo = Object.assign({}, props.userProfile)
     const languages = Object.assign([], props.languages)
     
     var friends = new Map();
-    props.friends.forEach((value, key, map) => {
+    props.friends.forEach((value, key) => {
         friends[key] = value
     })
 
     const handleLanguageClick = (query) => {
-        console.log('query: ', query)
-        // setQ(q)
-        // console.log('query: ', q)
-        // props.getQueryResultUsers(query);
+        console.log('language query: ', query)
     }
 
     useEffect(() => {
-        // setQueryResUsers(props.users);
-        var resUsers = []
-        if (props.users) {
-            props.users.forEach(user => {
-                resUsers.push()
-            })
-            setQueryResUsers(resUsers)
-        }
-        console.log('result users from backend: ', queryResUsers);
-    }, [props.users])
+        props.usergridProfileIdCallback(userprofileid);
+    }, [userprofileid])
 
     return (
         <div>
@@ -109,7 +97,11 @@ function Profile(props) {
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
                                 Friends: {Object.keys(friends).map((key) => (
-                                    <Button color='primary' variant='outlined' >{friends[key]['firstName']} {friends[key]['lastName']} </Button>
+                                    <Button color='primary' variant='outlined' id={friends[key]['id']} onClick={(e) =>
+                                        setUserprofileid(Object.keys(friends).find(id => friends[id]['firstName'] + ' ' + friends[id]['lastName'] == e.target.innerHTML))
+                                    } >
+                                        {friends[key]['firstName']} {friends[key]['lastName']}
+                                    </Button>
                                 ))}
                             </Typography>
                         </Grid>
@@ -121,7 +113,6 @@ function Profile(props) {
 }
 
 const mapStateToProps = (state) => {
-    console.log('result users: ', state.getUsers.users);
     return {
         users: state.getUsers.users
     }
@@ -134,4 +125,3 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
-// export default Profile
