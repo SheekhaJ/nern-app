@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
         margin: 10,
         width: 100,
         height: 120
+    },
+    input: {
+        display: 'none',
     }
 }));
 
@@ -71,6 +74,20 @@ function Profile(props) {
                             src={process.env.PUBLIC_URL + "/profile.jpg"}
                             className={classes.bigAvatar}
                         />
+                        <form>
+                        <input hidden
+                            multiple
+                            type='file'
+                            accept='image/*'
+                            className={classes.input}
+                            id='outlined-file-button' 
+                        />
+                        <label htmlFor='outlined-file-button' >
+                            <Button variant='outlined' component="span" >
+                                Upload Profile Picture
+                            </Button>
+                            </label>
+                        </form>
                     </Grid>
                     <Grid item xs={8}>
                         <Grid item xs={8} justify="flex-start">
