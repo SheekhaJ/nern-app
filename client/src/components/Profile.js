@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { connect } from 'react-redux';
 import { fetchUsers } from '../redux/actions';
 import Rating from '@material-ui/lab/Rating';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -76,11 +77,20 @@ function Profile(props) {
                         />
                         <form>
                         <input hidden
-                            multiple
                             type='file'
                             accept='image/*'
                             className={classes.input}
-                            id='outlined-file-button' 
+                                id='outlined-file-button' 
+                                onChange={e => {
+                                    const formdata = new FormData();
+                                    formdata.append('avatar', e.target.files[0]);
+                                    axios.post('http://localhost:3001/profile', formdata).
+                                        then(resp => {
+                                            console.log('upload profile picture resp: ', resp);
+                                        }).catch(err => {
+                                            console.log('upload profile picture err: ', err);
+                                        });
+                                }}
                         />
                         <label htmlFor='outlined-file-button' >
                             <Button variant='outlined' component="span" >
