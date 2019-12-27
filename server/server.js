@@ -2,6 +2,11 @@ var neo = require('neo4j-driver').v1;
 const express = require('express');
 const cors = require('cors');
 const bodyparser = require('body-parser');
+var mongoose = require('mongoose')
+var Schema = mongoose.Schema
+var fs = require('fs')
+var multer = require('multer')
+var upload = multer({ dest: './uploads/' });
 
 const url = 'bolt://localhost';
 
@@ -10,6 +15,10 @@ var session = driver.session()
 const apiPort = 3001;
 const app = express();
 const router = express.Router();
+
+mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
+
+var db = mongoose.connection;
 
 router.post('/login', (req, res) => {
     var email = req.body.payload;
@@ -106,7 +115,6 @@ router.post('/adduser', (req, res) => {
 
 router.post("/user", (req, res) => {
     userid = req.body.payload;
-    // userid = 14;
     console.log('userid is "' + userid + '"');
     // if (userid != "") {
       session
@@ -144,6 +152,30 @@ router.post("/user", (req, res) => {
   //   });
 });
 
+var userProfileSchema = new Schema({
+    // id: Number,
+    // firstName: String,
+    // lastName: String,
+    image: Buffer
+});
+
+router.post('/profile', upload.single('avatar'), (req, res) => {
+    db.once('open', () => {
+        console.log('connection to mongodb is now open!')
+    })
+    db.on('error', (err) => {
+        console.error('error while connecting to mongodb database test. err: ',err)
+    })
+    var userProfile = mongoose.model('Profiles', userProfileSchema);
+
+    var user = new userProfile
+    // user.id = new Date(Date.now());
+    user.image = fs.readFileSync(req.file.path);
+    user.save();
+
+    return res.json({message: 'Successful file upload!'})
+})
+
 driver.close()
 
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -152,6 +184,3 @@ app.use(cors());
 app.use(router);
 var server = app.listen(apiPort, ()=>console.log(`Listening on port ${apiPort}`));
 server.setTimeout(10000);
-
-// module.exports.getUsers = getUsers;
-// module.exports.getSkills = getSkills;
