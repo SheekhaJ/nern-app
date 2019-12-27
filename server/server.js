@@ -153,7 +153,7 @@ router.post("/user", (req, res) => {
 });
 
 var userProfileSchema = new Schema({
-    // id: Number,
+    id: String,
     // firstName: String,
     // lastName: String,
     image: Buffer
@@ -169,7 +169,7 @@ router.post('/profile', upload.single('avatar'), (req, res) => {
     var userProfile = mongoose.model('Profiles', userProfileSchema);
 
     var user = new userProfile
-    // user.id = new Date(Date.now());
+    user.id = new Date(Date.now());
     user.image = fs.readFileSync(req.file.path);
     user.save();
 
