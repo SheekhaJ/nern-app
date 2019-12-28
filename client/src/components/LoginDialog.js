@@ -23,6 +23,7 @@ function LoginDialog(props) {
     const [loggedUserID, setLoggedUserID] = useState('');
     const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
     const [loggedUserLastName, setLoggedUserLastName] = useState('');
+    const [error, setError] = useState(false);
     const classes = useStyles();
 
     const handleClickOpen = () => {
@@ -35,17 +36,23 @@ function LoginDialog(props) {
 
   const login = () => {
     props.loginuser(username)
-    setUsername('')
-    setOpen(false)
+    // setUsername('')
+    // setOpen(false)
   };
 
   useEffect(() => {
-    localStorage.setItem('eruid', props.uid)
-    localStorage.setItem('erAuthFirstName', props.fname);
-    localStorage.setItem('erAuthLastName', props.lname);
-    setLoggedUserID(localStorage.getItem('eruid'));
-    setLoggedUserFirstName(localStorage.getItem('erAuthFirstName'));
-    setLoggedUserLastName(localStorage.getItem('erAuthLastName'));
+    if (props.uid !== '' && props.fname !== '' && props.lname !== '') {
+      localStorage.setItem('eruid', props.uid)
+      localStorage.setItem('erAuthFirstName', props.fname);
+      localStorage.setItem('erAuthLastName', props.lname);
+      setLoggedUserID(localStorage.getItem('eruid'));
+      setLoggedUserFirstName(localStorage.getItem('erAuthFirstName'));
+      setLoggedUserLastName(localStorage.getItem('erAuthLastName'));
+      setUsername('')
+      setOpen(false)
+    } else {
+      setError(true);
+    }
   }, [props.uid, props.fname, props.lname]);
 
     return (
@@ -75,9 +82,12 @@ function LoginDialog(props) {
               type="email"
               value={username}
               fullWidth
+              placeholder = 'john@doe.com'
               onChange={e => {
                 setUsername(e.target.value);
               }}
+              error = {error && 'Invalid email address'}
+              helperText = {error && 'Invalid email address' }
             />
           </DialogContent>
           <DialogActions>
@@ -97,10 +107,19 @@ function LoginDialog(props) {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    uid: state.loginUser.loggedInUser['uid'],
-    fname: state.loginUser.loggedInUser['fName'],
-    lname: state.loginUser.loggedInUser['lName']
+  // console.log('login result: ', state.loginUser.loggedInUser, state.loginUser.loggedInUser == null);
+  if (state.loginUser.loggedInUser){
+    return {
+      uid: state.loginUser.loggedInUser['uid'],
+      fname: state.loginUser.loggedInUser['fName'],
+      lname: state.loginUser.loggedInUser['lName']
+      }
+  } else if(state.loginUser.loginError) {
+    return {
+      uid: '',
+      fname: '',
+      lname: ''
+    }
   }
 }
 
