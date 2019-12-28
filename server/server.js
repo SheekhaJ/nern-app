@@ -157,9 +157,12 @@ var userProfileSchema = new Schema({
     // firstName: String,
     // lastName: String,
     image: Buffer
+}, {
+    timestamps: true
 });
 
 router.post('/profile', upload.single('avatar'), (req, res) => {
+    console.log('at profile route!');
     db.once('open', () => {
         console.log('connection to mongodb is now open!')
     })
