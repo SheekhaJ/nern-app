@@ -13,7 +13,7 @@ function MainSurface(props) {
       
     return (
       <div>
-        <Header />
+        <Header resetProfileUseridCallback={() => {setProfileUserid()}}/>
         {!profileUserid && <ResultSurface profileid={(userid) => {setProfileUserid(userid)}} />}
         {profileUserid && <ProfileSurface profileid={profileUserid} />}
       </div>

@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import LoginDialog from '../LoginDialog';
+import Button from '@material-ui/core/Button';
 import {connect} from 'react-redux'
 import { fetchUsers } from '../../redux/actions';
 
@@ -81,9 +81,11 @@ function Header(props) {
         <AppBar position="static">
           <Toolbar>
             <LoginDialog />
-            <Typography className={classes.title} variant="h6" noWrap>
+            <Button variant='contained' color='primary' onClick={() => {
+              console.log('header clicked!'); props.resetProfileUseridCallback();
+            }} >
               Expert Recommender System
-            </Typography>
+            </Button>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
                 <SearchIcon />
