@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
 import { getUserProfile } from "../../redux/actions";
-import { IconButton } from '@material-ui/core';
 import Profile from '../Profile';
 
 
@@ -20,13 +18,6 @@ function ProfileSurface(props) {
 
   return (
     <div>
-      <IconButton aria-label='back' onClick={() => {
-        console.log('back button has been clicked on profile!',);
-        // setUserprofileid(0);
-        console.log('after userprofileid: ', userprofileid);
-      }}>
-        <ArrowBackIcon></ArrowBackIcon>
-      </IconButton>
       {
         props.userProfileInfo && props.friendsInfo && props.languageInfo && 
         <Profile userprofileid={userprofileid} userProfile={props.userProfileInfo} friends={props.friendsInfo} languages={props.languageInfo}

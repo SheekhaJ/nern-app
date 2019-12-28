@@ -3,7 +3,7 @@ import { Header } from "./index";
 import ResultSurface from "./ResultSurface";
 import ProfileSurface from "./ProfileSurface";
 
-function MainSurface(props) {
+function MainSurface() {
   const [profileUserid, setProfileUserid] = useState();
 
   useEffect(() => {
