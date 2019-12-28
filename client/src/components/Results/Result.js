@@ -42,18 +42,6 @@ function Result({ result, usergridProfileIdCallback }) {
       usergridProfileIdCallback(profileuserid)
   }, [profileuserid]);
 
-  // const handleProfileClick = (e) => {
-  //     // setProfileUserid(e.currentTarget["alt"]);
-  //     console.log("before profileuserid: ", profileuserid);
-  //     console.log("clicked on userid ", e.currentTarget["alt"]);
-  //     setProfileUserid({ profileuserid: '34' });
-  //     // console.log('props here: ',props)
-  //     // props.usergridProfileIdCallback(e.currentTarget["alt"]);
-  //     // getUserProfile(e.currentTarget['alt']);
-  //     // setProfileUserid(e.currentTarget['alt'])
-  //     console.log('after profileuserid: ', profileuserid);
-  // }
-
   const open = Boolean(anchorEl);
   const popoverid = open ? "simple-popover" : undefined;
 

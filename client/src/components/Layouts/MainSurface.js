@@ -14,9 +14,7 @@ function MainSurface(props) {
     return (
       <div>
         <Header />
-        {/* {!profileUserid && <ResultSurface profileid={getUseridForProfile} />} */}
         {!profileUserid && <ResultSurface profileid={(userid) => {setProfileUserid(userid)}} />}
-        {/* { <ProfileSurface profileid={18} />} */}
         {profileUserid && <ProfileSurface profileid={profileUserid} />}
       </div>
     );

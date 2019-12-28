@@ -13,11 +13,6 @@ function ProfileSurface(props) {
     props.getUserProfile(props.profileid);
   }, [])
 
-  // useEffect(() => {
-  //   console.log('props.profileid has changed: ', props.profileid);
-  //   console.log('userprofileid has changed: ', userprofileid);
-  // }, [userprofileid])
-
   const handleProfileClick = (profileidfromclick) => {
     console.log('profileid from click - ',profileidfromclick)
     props.getUserProfile(profileidfromclick)
