@@ -9,30 +9,94 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
 import { loginUser } from '../redux/actions';
 import { connect } from "react-redux";
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import CloseIcon from '@material-ui/icons/Close';
+import { green } from '@material-ui/core/colors';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import clsx from 'clsx';
 
   const useStyles = makeStyles(theme => ({
     button: {
       margin: theme.spacing(1)
     }
   }));
-  
+
 
 function LoginDialog(props) {
-    const [open, setOpen] = useState(false);
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
     const [username, setUsername] = useState('');
     const [loggedUserID, setLoggedUserID] = useState('');
     const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
     const [loggedUserLastName, setLoggedUserLastName] = useState('');
-    const [error, setError] = useState(false);
-    const classes = useStyles();
+    const [displayError, setDisplayError] = useState(false);
+  const classes = useStyles();
+  
 
-    const handleClickOpen = () => {
-      setOpen(true);
+  const variantIcon = {
+    success: CheckCircleIcon,
+    error: ErrorIcon,
+  };
+
+  const useStyles1 = makeStyles(theme => ({
+    success: {
+      backgroundColor: green[600],
+    },
+    error: {
+      backgroundColor: theme.palette.error.dark,
+    },
+    icon: {
+      fontSize: 20,
+    },
+    iconVariant: {
+      opacity: 0.9,
+      marginRight: theme.spacing(1),
+    },
+    message: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  }));
+
+  function SnackbarContentWrapper(props) {
+    const classes = useStyles1();
+    const { className, message, onClose, variant, ...other } = props;
+    const Icon = variantIcon[variant];
+
+    return (
+      <SnackbarContent
+        className={clsx(classes[variant], className)}
+        aria-describedby="client-snackbar"
+        message={
+          <span id="client-snackbar" className={classes.message}>
+            <Icon className={clsx(classes.icon, classes.iconVariant)} />
+            {message}
+          </span>
+        }
+        action={[
+          <IconButton key="close" aria-label="close" color="inherit" onClick={handleSnackBarClickClose}>
+            <CloseIcon className={classes.icon} />
+          </IconButton>,
+        ]}
+        {...other}
+      />
+    );
+  }
+
+    const handleLoginDialogClickOpen = () => {
+      setOpenLoginDialog(true);
     };
 
-  const handleClose = () => {
-      setOpen(false);
-    };
+  const handleLoginDialogClickClose = () => {
+      setOpenLoginDialog(false);
+  };
+  
+  const handleSnackBarClickClose = () => {
+    setOpenSnackBar(false);
+  }
 
   const login = () => {
     props.loginuser(username)
@@ -49,16 +113,20 @@ function LoginDialog(props) {
       setLoggedUserFirstName(localStorage.getItem('erAuthFirstName'));
       setLoggedUserLastName(localStorage.getItem('erAuthLastName'));
       setUsername('')
-      setOpen(false)
+      setOpenLoginDialog(false)
+      if (props.uid && props.fname && props.lname) {
+        setOpenSnackBar(true);
+      }
     } else {
-      setError(true);
+      setDisplayError(true);
+      setOpenSnackBar(true);
     }
   }, [props.uid, props.fname, props.lname]);
 
     return (
       <div>
         {loggedUserID === 'undefined' && loggedUserFirstName ==='undefined' && loggedUserLastName === "undefined" &&
-          <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
+          <Button variant="outlined" color="inherit" onClick={handleLoginDialogClickOpen}>
             Log In
         </Button>}
         {loggedUserID !== 'undefined' && loggedUserFirstName !== 'undefined' && loggedUserLastName !== 'undefined' &&
@@ -67,8 +135,8 @@ function LoginDialog(props) {
           {loggedUserFirstName} {loggedUserLastName}
         </Button>}
         <Dialog
-          open={open}
-          onClose={handleClose}
+          open={openLoginDialog}
+          onClose={handleLoginDialogClickClose}
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
@@ -76,6 +144,7 @@ function LoginDialog(props) {
             <DialogContentText>Log In</DialogContentText>
             <TextField
               autoFocus
+              required
               margin="dense"
               id="name"
               label="Email Address"
@@ -86,28 +155,38 @@ function LoginDialog(props) {
               onChange={e => {
                 setUsername(e.target.value);
               }}
-              error = {error && 'Invalid email address'}
-              helperText = {error && 'Invalid email address' }
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleLoginDialogClickClose} color="primary">
               Cancel
             </Button>
             <Button
-              onClick={() => {login(username);}}
+              onClick={() => { login(username);}}
               color="primary"
             >
               Log In
             </Button>
           </DialogActions>
         </Dialog>
+
+        <Snackbar anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }} open={openSnackBar}
+          autoHideDuration={3000}
+          onClose={handleSnackBarClickClose} >
+          <SnackbarContentWrapper onClose={handleSnackBarClickClose}
+            variant={(props.uid !== '' && props.fname !== '' && props.lname !== '') ? 'success' : 'error'}
+            message={(props.uid !== '' && props.fname !== '' && props.lname !== '') ? 'Login successful' : 'Login failed'}
+            >
+          </SnackbarContentWrapper>
+        </Snackbar>
       </div>
     );
 }
 
 const mapStateToProps = (state) => {
-  // console.log('login result: ', state.loginUser.loggedInUser, state.loginUser.loggedInUser == null);
   if (state.loginUser.loggedInUser){
     return {
       uid: state.loginUser.loggedInUser['uid'],
@@ -120,6 +199,10 @@ const mapStateToProps = (state) => {
       fname: '',
       lname: ''
     }
+  } else {
+    return {
+      
+    };
   }
 }
 
