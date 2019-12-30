@@ -184,8 +184,12 @@ export const loginUser = (email) => {
     axios
       .post(serverURL + "/login", { payload: email })
       .then(response => {
-        var r = response.data.records[0];
-        return dispatch(loginUserSuccess(r._fields[0], r._fields[1], r._fields[2]));
+        if (response.data.records){
+          var r = response.data.records[0];
+          return dispatch(loginUserSuccess(r._fields[0], r._fields[1], r._fields[2]));
+        } else {
+          return dispatch(loginUserFailure(response.data));
+        }
       })
       .catch(error => {
         console.log("login user action error: ", error);
