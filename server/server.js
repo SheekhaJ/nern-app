@@ -31,7 +31,8 @@ router.post('/login', (req, res) => {
         if (result.records.length === 1) {
             return res.json(result);
         } else {
-          console.err('something odd during login return ',result);
+            console.error('something odd during login return ', result);
+            return res.json({ message: 'failed login' });
         }
       })
       .catch(error => {
