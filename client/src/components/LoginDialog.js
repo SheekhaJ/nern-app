@@ -17,6 +17,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
+import validate from 'validate.js';
+import constraints from '../Util/constraints';
 
   const useStyles = makeStyles(theme => ({
     button: {
@@ -29,10 +31,10 @@ function LoginDialog(props) {
     const [openLoginDialog, setOpenLoginDialog] = useState(false);
     const [openSnackBar, setOpenSnackBar] = useState(false);
     const [username, setUsername] = useState('');
-  const [loggedUserID, setLoggedUserID] = useState('');
-  const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
-  const [loggedUserLastName, setLoggedUserLastName] = useState('');
-    const [displayError, setDisplayError] = useState(false);
+    const [loggedUserID, setLoggedUserID] = useState('');
+    const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
+    const [loggedUserLastName, setLoggedUserLastName] = useState('');
+    const [errors, setErrors] = useState(null);
     const classes = useStyles();
   
 
@@ -98,10 +100,17 @@ function LoginDialog(props) {
     setOpenSnackBar(false);
   }
 
-  const login = () => {
-    props.loginuser(username)
+  const login = (loginusername) => {
+    const errs = validate({ emailAddress: loginusername }, { emailAddress: constraints.emailAddress });
+    
+    if (errs) {
+      setErrors(errs);
+    } else {
+      setErrors(null);
+      props.loginuser(loginusername);
     // setUsername('')
     // setOpen(false)
+    }
   };
 
   useEffect(() => {
@@ -112,13 +121,17 @@ function LoginDialog(props) {
       setLoggedUserID(localStorage.getItem('eruid'));
       setLoggedUserFirstName(localStorage.getItem('erAuthFirstName'));
       setLoggedUserLastName(localStorage.getItem('erAuthLastName'));
-      setUsername('')
+      // setLoggedUserID(props.uid)
+      // console.log('userid, firstname, lastname: ', localStorage.getItem('eruid'), localStorage.getItem('erAuthFirstName'), localStorage.getItem('erAuthLastName'))
+      // console.log('userid, firstname, lastname: ', props.uid, props.fname, props.lname);
+      // console.log('userid, firstname, lastname: ', loggedUserID, loggedUserFirstName, loggedUserLastName);
+      // setUsername('')
+      console.log('username: ', username);
       setOpenLoginDialog(false)
       if (props.uid && props.fname && props.lname) {
         setOpenSnackBar(true);
       }
-    } else if (props.uid == 'unauthenticated' && props.fname == 'unauthenticated' && props.lname == 'unauthenticated') {
-      setDisplayError(true);
+    } else if (props.uid === 'unauthenticated' && props.fname === 'unauthenticated' && props.lname === 'unauthenticated') {
       setOpenSnackBar(true);
     } else {
       //Do nothing
@@ -147,8 +160,7 @@ function LoginDialog(props) {
           <DialogContent>
             <DialogContentText>Log In</DialogContentText>
             <TextField
-              autoFocus
-              required
+              autoFocus required
               margin="dense"
               id="name"
               label="Email Address"
@@ -159,6 +171,8 @@ function LoginDialog(props) {
               onChange={e => {
                 setUsername(e.target.value);
               }}
+              error={!!(errors && errors.emailAddress)}
+              helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
             />
           </DialogContent>
           <DialogActions>
