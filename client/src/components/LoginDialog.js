@@ -26,40 +26,40 @@ import clsx from 'clsx';
 
 
 function LoginDialog(props) {
-  const [openLoginDialog, setOpenLoginDialog] = useState(false);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+    const [openLoginDialog, setOpenLoginDialog] = useState(false);
+    const [openSnackBar, setOpenSnackBar] = useState(false);
     const [username, setUsername] = useState('');
-    const [loggedUserID, setLoggedUserID] = useState('');
-    const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
-    const [loggedUserLastName, setLoggedUserLastName] = useState('');
+  const [loggedUserID, setLoggedUserID] = useState('');
+  const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
+  const [loggedUserLastName, setLoggedUserLastName] = useState('');
     const [displayError, setDisplayError] = useState(false);
-  const classes = useStyles();
+    const classes = useStyles();
   
 
-  const variantIcon = {
-    success: CheckCircleIcon,
-    error: ErrorIcon,
-  };
+    const variantIcon = {
+      success: CheckCircleIcon,
+      error: ErrorIcon,
+    };
 
-  const useStyles1 = makeStyles(theme => ({
-    success: {
-      backgroundColor: green[600],
-    },
-    error: {
-      backgroundColor: theme.palette.error.dark,
-    },
-    icon: {
-      fontSize: 20,
-    },
-    iconVariant: {
-      opacity: 0.9,
-      marginRight: theme.spacing(1),
-    },
-    message: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-  }));
+    const useStyles1 = makeStyles(theme => ({
+      success: {
+        backgroundColor: green[600],
+      },
+      error: {
+        backgroundColor: theme.palette.error.dark,
+      },
+      icon: {
+        fontSize: 20,
+      },
+      iconVariant: {
+        opacity: 0.9,
+        marginRight: theme.spacing(1),
+      },
+      message: {
+        display: 'flex',
+        alignItems: 'center',
+      },
+    }));
 
   function SnackbarContentWrapper(props) {
     const classes = useStyles1();
@@ -105,7 +105,7 @@ function LoginDialog(props) {
   };
 
   useEffect(() => {
-    if (props.uid !== '' && props.fname !== '' && props.lname !== '') {
+    if (props.uid !== 'unauthenticated' && props.fname !== 'unauthenticated' && props.lname !== 'unauthenticated') {
       localStorage.setItem('eruid', props.uid)
       localStorage.setItem('erAuthFirstName', props.fname);
       localStorage.setItem('erAuthLastName', props.lname);
@@ -117,19 +117,23 @@ function LoginDialog(props) {
       if (props.uid && props.fname && props.lname) {
         setOpenSnackBar(true);
       }
-    } else {
+    } else if (props.uid == 'unauthenticated' && props.fname == 'unauthenticated' && props.lname == 'unauthenticated') {
       setDisplayError(true);
       setOpenSnackBar(true);
+    } else {
+      //Do nothing
     }
   }, [props.uid, props.fname, props.lname]);
 
     return (
       <div>
-        {loggedUserID === 'undefined' && loggedUserFirstName ==='undefined' && loggedUserLastName === "undefined" &&
+        {['undefined', 'unauthenticated'].includes(loggedUserID) && ['undefined', 'unauthenticated'].includes(loggedUserFirstName)
+          && ['undefined', 'unauthenticated'].includes(loggedUserLastName) &&
           <Button variant="outlined" color="inherit" onClick={handleLoginDialogClickOpen}>
             Log In
         </Button>}
-        {loggedUserID !== 'undefined' && loggedUserFirstName !== 'undefined' && loggedUserLastName !== 'undefined' &&
+        {!['', 'unauthenticated','undefined'].includes(loggedUserID) && !['', 'unauthenticated', 'undefined'].includes(loggedUserFirstName)
+          && !['','unauthenticated', 'undefined'].includes(loggedUserLastName) &&
           <Button variant='outlined'
           className={classes.button} color='inherit'>
           {loggedUserFirstName} {loggedUserLastName}
@@ -177,8 +181,8 @@ function LoginDialog(props) {
           autoHideDuration={3000}
           onClose={handleSnackBarClickClose} >
           <SnackbarContentWrapper onClose={handleSnackBarClickClose}
-            variant={(props.uid !== '' && props.fname !== '' && props.lname !== '') ? 'success' : 'error'}
-            message={(props.uid !== '' && props.fname !== '' && props.lname !== '') ? 'Login successful' : 'Login failed'}
+            variant={(props.uid !== 'unauthenticated' && props.fname !== 'unauthenticated' && props.lname !== 'unauthenticated') ? 'success' : 'error'}
+            message={(props.uid !== 'unauthenticated' && props.fname !== 'unauthenticated' && props.lname !== 'unauthenticated') ? 'Login successful' : 'Login failed'}
             >
           </SnackbarContentWrapper>
         </Snackbar>
@@ -187,18 +191,21 @@ function LoginDialog(props) {
 }
 
 const mapStateToProps = (state) => {
-  if (state.loginUser.loggedInUser){
+  //When user is authenticated successfully.
+  if (state.loginUser.loggedInUser) {
     return {
       uid: state.loginUser.loggedInUser['uid'],
       fname: state.loginUser.loggedInUser['fName'],
       lname: state.loginUser.loggedInUser['lName']
-      }
+    }
+  //When user is not authenticated successfully. 
   } else if(state.loginUser.loginError) {
     return {
-      uid: '',
-      fname: '',
-      lname: ''
+      uid: 'unauthenticated',
+      fname: 'unauthenticated',
+      lname: 'unauthenticated'
     }
+  //When user has not attempted to log-in.
   } else {
     return {
       
