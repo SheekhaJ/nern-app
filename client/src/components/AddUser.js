@@ -9,12 +9,15 @@ import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions';
+import validate from 'validate.js';
+import constraints from '../Util/constraints';
 
 export function AddUser(props) {
 
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' })
   const [openAlert, setOpenAlert] = useState(false);
+  const [errors, setErrors] = useState(null);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -25,8 +28,15 @@ export function AddUser(props) {
   };
 
   const handleSubmit = () => {
-    if (user.firstName === '' || user.lastName === '') {
-      setOpenAlert(true)
+    const errs = validate({ firstName: user.firstName, lastName: user.lastName, emailAddress: user.email, githubUrl: user.githubUrl, linkedinUrl: user.linkedinUrl },
+    {firstName: constraints.firstName, lastName: constraints.lastName, emailAddress: constraints.emailAddress, githubUrl: constraints.githubUrl, linkedinUrl: constraints.linkedinUrl});
+    console.log('errs: ', errs);
+
+    if (errs) {
+      setErrors(errs)
+    // }
+    // if (user.firstName === '' || user.lastName === '') {
+    //   setOpenAlert(true)
     } else {
       props.addNewUser(user);
       setOpen(false);
@@ -71,6 +81,8 @@ export function AddUser(props) {
               onChange={e => {
                 setUser({ ...user, firstName: e.target.value });
               }}
+              error={!!(errors && errors.firstName)}
+              helperText={(errors && errors.firstName) ? errors.firstName[0] : ''}
             />
             <TextField
               required
@@ -82,8 +94,11 @@ export function AddUser(props) {
               onChange={e => {
                 setUser({ ...user, lastName: e.target.value });
               }}
+              error={!!(errors && errors.lastName)}
+              helperText={(errors && errors.lastName) ? errors.lastName[0] : ''}
             />
             <TextField
+              required
               margin="dense"
               id="email"
               label="Email Address"
@@ -93,6 +108,8 @@ export function AddUser(props) {
               onChange={e => {
                 setUser({ ...user, email: e.target.value });
               }}
+              error={!!(errors && errors.emailAddress)}
+              helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
             />
             <TextField
               margin="dense"
@@ -103,6 +120,8 @@ export function AddUser(props) {
               onChange={e => {
                 setUser({ ...user, githubUrl: e.target.value });
               }}
+              error={!!(errors && errors.githubUrl)}
+              helperText={(errors && errors.githubUrl) ? errors.githubUrl[0] : ''}
             />
             <TextField
               margin="dense"
@@ -113,6 +132,8 @@ export function AddUser(props) {
               onChange={e => {
                 setUser({ ...user, linkedinUrl: e.target.value });
               }}
+              error={!!(errors && errors.linkedinUrl)}
+              helperText={(errors && errors.linkedinUrl) ? errors.linkedinUrl[0] : ''}
             />
           </DialogContent>
           <DialogActions>
@@ -125,14 +146,14 @@ export function AddUser(props) {
           </DialogActions>
         </Dialog>
 
-        <Dialog aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description' open={openAlert} onClose={handleAlertClose}>
+        {/* <Dialog aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description' open={openAlert} onClose={handleAlertClose}>
           <DialogTitle id='alert-dialog-title'>{"Invalid input for new user"}</DialogTitle>
           <DialogContent id='alert-dialog-description'>First and Last name of new user are mandatory</DialogContent>
           <DialogActions>
             <Button onClick={handleAlertClose} color='primary'>Cancel</Button>
             <Button onClick={handleAlertClose} color='primary'>Ok</Button>
           </DialogActions>
-        </Dialog>
+        </Dialog> */}
       </div>
     );
 }
