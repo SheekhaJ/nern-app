@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { connect } from 'react-redux';
 import { fetchUsers } from '../redux/actions';
 import Rating from '@material-ui/lab/Rating';
+import Link from '@material-ui/core/Link';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -102,14 +103,41 @@ function Profile(props) {
                     <Grid item xs={8}>
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                First Name:{userProfileInfo['firstName']}
+                                First Name: {userProfileInfo['firstName']}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
 
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                Last Name:{userProfileInfo['lastName']}
+                                Last Name: {userProfileInfo['lastName']}
+                            </Typography>
+                            <Divider variant="middle" orientation="horizontal" />
+                        </Grid>
+
+                        <Grid item xs={8} justify="flex-start">
+                            <Typography gutterBottom variant="h5" component="h6">
+                                Email: {userProfileInfo['email']}
+                            </Typography>
+                            <Divider variant="middle" orientation="horizontal" />
+                        </Grid>
+
+                        <Grid item xs={8} justify="flex-start">
+                            <Typography gutterBottom variant="h5" component="h6">
+                                Github URL: 
+                                <Link href="userProfileInfo['githubUrl']">
+                                    {userProfileInfo['githubUrl']}
+                                </Link>
+                            </Typography>
+                            <Divider variant="middle" orientation="horizontal" />
+                        </Grid>
+                        
+                        <Grid item xs={8} justify="flex-start">
+                            <Typography gutterBottom variant="h5" component="h6">
+                                LinkedIn URL: 
+                                <Link href="userProfileInfo['linkedinUrl']">
+                                    {userProfileInfo['linkedinUrl']}
+                                </Link>
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
@@ -130,7 +158,7 @@ function Profile(props) {
                             <Typography gutterBottom variant="h5" component="h6">
                                 Friends: {Object.keys(friends).map((key) => (
                                     <Button color='primary' variant='outlined' id={friends[key]['id']} onClick={(e) =>
-                                        setUserprofileid(Object.keys(friends).find(id => friends[id]['firstName'] + ' ' + friends[id]['lastName'] == e.target.innerHTML))
+                                        setUserprofileid(Object.keys(friends).find(id => friends[id]['firstName'] + ' ' + friends[id]['lastName'] === e.target.innerHTML))
                                     } >
                                         {friends[key]['firstName']} {friends[key]['lastName']}
                                     </Button>
