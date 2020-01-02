@@ -127,7 +127,7 @@ function Profile(props) {
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
                                 Github URL: 
-                                <Link href="userProfileInfo['githubUrl']">
+                                <Link style={{ cursor: 'pointer'}} onClick={() => { window.open(userProfileInfo['githubUrl'], '_blank')}} rel='noopener' >
                                     {userProfileInfo['githubUrl']}
                                 </Link>
                             </Typography>
@@ -137,7 +137,7 @@ function Profile(props) {
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
                                 LinkedIn URL: 
-                                <Link href="userProfileInfo['linkedinUrl']">
+                                <Link style={{ cursor: 'pointer' }} onClick={() => { window.open(userProfileInfo['linkedinUrl'], '_blank') }} rel='noopener' >
                                     {userProfileInfo['linkedinUrl']}
                                 </Link>
                             </Typography>
