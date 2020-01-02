@@ -77,7 +77,9 @@ function Profile(props) {
                             className={classes.bigAvatar}
                         />
                         <form>
-                        <input hidden
+                            {localStorage.getItem('erAuthFirstName') == userProfileInfo['firstName'] && 
+                                localStorage.getItem('erAuthLastName') == userProfileInfo['lastName'] && 
+                                <input hidden
                             type='file'
                             accept='image/*'
                             className={classes.input}
@@ -92,12 +94,12 @@ function Profile(props) {
                                             console.log('upload profile picture err: ', err);
                                         });
                                 }}
-                        />
+                        /> && 
                         <label htmlFor='outlined-file-button' >
                             <Button variant='outlined' component="span" >
                                 Upload Profile Picture
                             </Button>
-                            </label>
+                            </label>}
                         </form>
                     </Grid>
                     <Grid item xs={8}>
