@@ -20,6 +20,16 @@ mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
 
 var db = mongoose.connection;
 
+var userProfileSchema = new Schema({
+    id: String,
+    // firstName: String,
+    // lastName: String,
+    image: Buffer
+}, {
+    timestamps: true
+});
+var userProfile = mongoose.model('Profiles', userProfileSchema);
+
 router.post('/login', (req, res) => {
     var email = req.body.payload;
     console.log('post login ',email)
@@ -108,10 +118,23 @@ router.post('/adduser', (req, res) => {
         }
     }).catch(error => {
         console.log('error: ', error)
-    }).finally((result)=>{
+    }).finally((result) => {
         session.close();
         return res.json({ result });
     });
+});
+
+router.get('/user', (req, res) => {
+    // console.log('got the req at /user route - ', req);
+    userProfile.findById('5e06f44a2f74b6409cdae4c4', function (err, img, next) {
+        if (err) {
+            return next(err);
+        }
+        // console.log('img: ', img);
+        res.contentType('png');
+        res.send(Buffer.from(img.image.buffer).toString('base64'));
+    })
+    return res;
 })
 
 router.post("/user", (req, res) => {
@@ -122,8 +145,9 @@ router.post("/user", (req, res) => {
         .readTransaction(function(transaction) {
           var result = transaction.run(
             "match (u:user{id:'"+userid+"'})-[r]-(f) return u,r,f"
-          );
-          return result;
+            );
+            
+          return result
         })
         .then(function(result) {
             // console.log('profile result from server: ', result);
@@ -153,14 +177,6 @@ router.post("/user", (req, res) => {
   //   });
 });
 
-var userProfileSchema = new Schema({
-    id: String,
-    // firstName: String,
-    // lastName: String,
-    image: Buffer
-}, {
-    timestamps: true
-});
 
 router.post('/profile', upload.single('avatar'), (req, res) => {
     console.log('at profile route!');
@@ -170,7 +186,7 @@ router.post('/profile', upload.single('avatar'), (req, res) => {
     db.on('error', (err) => {
         console.error('error while connecting to mongodb database test. err: ',err)
     })
-    var userProfile = mongoose.model('Profiles', userProfileSchema);
+    // var userProfile = mongoose.model('Profiles', userProfileSchema);
 
     var user = new userProfile
     user.id = new Date(Date.now());
