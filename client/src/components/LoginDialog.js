@@ -113,6 +113,21 @@ function LoginDialog(props) {
     }
   };
 
+  const handleEnterKeyPress = (eventkey, loginusername) => {
+    if (eventkey == 'Enter') { 
+      const errs = validate({ emailAddress: loginusername }, { emailAddress: constraints.emailAddress });
+
+      if (errs) {
+        setErrors(errs);
+      } else {
+        setErrors(null);
+        props.loginuser(loginusername);
+        // setUsername('')
+        // setOpen(false)
+      }
+    }
+  };
+
   useEffect(() => {
     if (props.uid !== 'unauthenticated' && props.fname !== 'unauthenticated' && props.lname !== 'unauthenticated') {
       localStorage.setItem('eruid', props.uid)
@@ -171,6 +186,7 @@ function LoginDialog(props) {
               onChange={e => {
                 setUsername(e.target.value);
               }}
+              onKeyPress={e => handleEnterKeyPress(e.key, username)}
               error={!!(errors && errors.emailAddress)}
               helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
             />
