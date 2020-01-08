@@ -101,28 +101,28 @@ function LoginDialog(props) {
     setOpenSnackBar(false);
   }
 
-  const login = (loginusername) => {
-    const errs = validate({ emailAddress: loginusername }, { emailAddress: constraints.emailAddress });
+  const login = () => {
+    const errs = validate({ emailAddress: username }, { emailAddress: constraints.emailAddress });
     
     if (errs) {
       setErrors(errs);
     } else {
       setErrors(null);
-      props.loginuser(loginusername);
+      props.loginuser(username, password);
     // setUsername('')
     // setOpen(false)
     }
   };
 
-  const handleEnterKeyPress = (eventkey, loginusername) => {
+  const handleEnterKeyPress = (eventkey) => {
     if (eventkey == 'Enter') { 
-      const errs = validate({ emailAddress: loginusername }, { emailAddress: constraints.emailAddress });
+      const errs = validate({ emailAddress: username }, { emailAddress: constraints.emailAddress });
 
       if (errs) {
         setErrors(errs);
       } else {
         setErrors(null);
-        props.loginuser(loginusername);
+        props.loginuser(username, password);
         // setUsername('')
         // setOpen(false)
       }
@@ -142,7 +142,7 @@ function LoginDialog(props) {
       // console.log('userid, firstname, lastname: ', props.uid, props.fname, props.lname);
       // console.log('userid, firstname, lastname: ', loggedUserID, loggedUserFirstName, loggedUserLastName);
       // setUsername('')
-      console.log('username: ', username);
+      // console.log('username: ', username);
       setOpenLoginDialog(false)
       if (props.uid && props.fname && props.lname) {
         setOpenSnackBar(true);
@@ -187,7 +187,7 @@ function LoginDialog(props) {
               onChange={e => {
                 setUsername(e.target.value);
               }}
-              onKeyPress={e => handleEnterKeyPress(e.key, username)}
+              onKeyPress={e => handleEnterKeyPress(e.key, username, password)}
               error={!!(errors && errors.emailAddress)}
               helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
             />
@@ -202,6 +202,7 @@ function LoginDialog(props) {
               onChange={e => {
                 setPassword(e.target.value);
               }}
+              onKeyPress={e => handleEnterKeyPress(e.key, username, password)}
             />
           </DialogContent>
           <DialogActions>
@@ -258,7 +259,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loginuser: (username) => dispatch(loginUser(username))
+    loginuser: (username, password) => dispatch(loginUser(username, password))
   }
 }
 

@@ -54,10 +54,10 @@ function addUserFailure() {
   }
 }
 
-function loginUserRequest(email) {
+function loginUserRequest(email, password) {
   return {
     type: LOGIN_USER_REQUEST,
-    payload: email
+    payload: {loginusername: email, loginpassword: password}
   }
 }
 
@@ -178,11 +178,12 @@ export const addUser = (user) => {
   }
 }
 
-export const loginUser = (email) => {
+export const loginUser = (email, password) => {
   return function (dispatch) {
-    dispatch(loginUserRequest(email));
+    console.log('in actions: ', email, password);
+    dispatch(loginUserRequest(email, password));
     axios
-      .post(serverURL + "/login", { payload: email })
+      .post(serverURL + "/login", { loginusername: email, loginpassword: password })
       .then(response => {
         if (response.data.records){
           var r = response.data.records[0];
