@@ -7,6 +7,7 @@ var Schema = mongoose.Schema
 var fs = require('fs')
 var multer = require('multer')
 var upload = multer({ dest: './uploads/' });
+const bcrypt = require('bcryptjs');
 
 const url = 'bolt://localhost';
 
@@ -31,8 +32,16 @@ var userProfileSchema = new Schema({
 var userProfile = mongoose.model('Profiles', userProfileSchema);
 
 router.post('/login', (req, res) => {
-    var email = req.body.payload;
-    console.log('post login ',email)
+    var email = req.body.loginusername;
+    var password = req.body.loginpassword;
+    console.log('post login ', email, password)
+    
+    bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(password, salt, function (err, hash) {
+            console.log('hashed password - ', hash)
+        })
+    })
+
     session.readTransaction(function(transaction) {
         var result = transaction.run("match (u:user{email: '" + email + "'}) return u.id, u.firstName, u.lastName");
         return result;

@@ -180,7 +180,6 @@ export const addUser = (user) => {
 
 export const loginUser = (email, password) => {
   return function (dispatch) {
-    console.log('in actions: ', email, password);
     dispatch(loginUserRequest(email, password));
     axios
       .post(serverURL + "/login", { loginusername: email, loginpassword: password })
