@@ -31,6 +31,7 @@ function LoginDialog(props) {
     const [openLoginDialog, setOpenLoginDialog] = useState(false);
     const [openSnackBar, setOpenSnackBar] = useState(false);
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [loggedUserID, setLoggedUserID] = useState('');
     const [loggedUserFirstName, setLoggedUserFirstName] = useState('');
     const [loggedUserLastName, setLoggedUserLastName] = useState('');
@@ -189,6 +190,18 @@ function LoginDialog(props) {
               onKeyPress={e => handleEnterKeyPress(e.key, username)}
               error={!!(errors && errors.emailAddress)}
               helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
+            />
+            <TextField
+              required
+              id="password"
+              label="Password"
+              type="password"
+              value={password}
+              fullWidth
+              placeholder='password'
+              onChange={e => {
+                setPassword(e.target.value);
+              }}
             />
           </DialogContent>
           <DialogActions>
