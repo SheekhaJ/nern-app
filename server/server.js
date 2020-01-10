@@ -34,32 +34,60 @@ var userProfile = mongoose.model('Profiles', userProfileSchema);
 router.post('/login', (req, res) => {
     var email = req.body.loginusername;
     var password = req.body.loginpassword;
-    console.log('post login ', email, password)
+    // console.log('post login ', email, password)
     
     bcrypt.genSalt(10, function (err, salt) {
         bcrypt.hash(password, salt, function (err, hash) {
-            console.log('hashed password - ', hash)
+            
+            session.readTransaction(function (transaction) {
+                // console.log('email, pwd: ', email, hash);
+                var result = transaction.run("match (u:user{email: '" + email + "'}) return u.id, u.firstName, u.lastName, u.pwd");
+                return result;
+            })
+                .then(result => {
+                    // console.log('result - ', result.records[0]);
+                    var record = result.records[0]
+                    var dbhash = record.get('u.pwd')
+                    // console.log('dbhash - ', dbhash)
+                    
+                    // bcrypt.compare(password, dbhash).then(res => {
+                    //     console.log('result after comparison - ', res, result);
+                    //     // return res.json({ 'firstName' : record.get('u.firstName'), 'lastName': record.get('u.lastName')});
+                    //     return res.json({result})
+                    // }).catch(err => {
+                    //     return res.json({ message: 'login failed' });
+                    // })
+
+                    bcrypt.compare(password, dbhash, function (err, compareres) {
+                        console.log('result adter comparison - ', compareres, record);
+                        if (compareres) {
+                            var responseObj = {
+                                userid: record.get('u.id'),
+                                firstName: record.get('u.firstName'),
+                                lastName: record.get('u.lastName')
+                            }
+                            return res.json({ responseObj });
+                        } else {
+                            res.json({ message: 'faied login!' });
+                        }
+                    })
+
+                    // if (result.records.length === 1) {
+                    //     return res.json(result);
+                    // } else {
+                    //     console.error('something odd during login return ', result);
+                    //     return res.json({ message: 'failed login' });
+                    // }
+                })
+                .catch(error => {
+                    console.log("error: ", error);
+                })
+                .finally(() => {
+                    session.close();
+                });
         })
     })
 
-    session.readTransaction(function(transaction) {
-        var result = transaction.run("match (u:user{email: '" + email + "'}) return u.id, u.firstName, u.lastName");
-        return result;
-      })
-      .then(result => {
-        if (result.records.length === 1) {
-            return res.json(result);
-        } else {
-            console.error('something odd during login return ', result);
-            return res.json({ message: 'failed login' });
-        }
-      })
-      .catch(error => {
-        console.log("error: ", error);
-      })
-        .finally(() => {
-          session.close();
-      });
 })
 
 router.get('/users', (req, res)=>{
