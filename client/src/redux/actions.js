@@ -184,9 +184,9 @@ export const loginUser = (email, password) => {
     axios
       .post(serverURL + "/login", { loginusername: email, loginpassword: password })
       .then(response => {
-        if (response.data.records){
-          var r = response.data.records[0];
-          return dispatch(loginUserSuccess(r._fields[0], r._fields[1], r._fields[2]));
+        if (response.data){
+          var r = response.data.responseObj;
+          return dispatch(loginUserSuccess(r['userid'], r['firstName'], r['lastName']));
         } else {
           return dispatch(loginUserFailure(response.data));
         }
