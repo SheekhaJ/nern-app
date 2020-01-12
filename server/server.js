@@ -45,18 +45,8 @@ router.post('/login', (req, res) => {
                 return result;
             })
                 .then(result => {
-                    // console.log('result - ', result.records[0]);
                     var record = result.records[0]
                     var dbhash = record.get('u.pwd')
-                    // console.log('dbhash - ', dbhash)
-                    
-                    // bcrypt.compare(password, dbhash).then(res => {
-                    //     console.log('result after comparison - ', res, result);
-                    //     // return res.json({ 'firstName' : record.get('u.firstName'), 'lastName': record.get('u.lastName')});
-                    //     return res.json({result})
-                    // }).catch(err => {
-                    //     return res.json({ message: 'login failed' });
-                    // })
 
                     bcrypt.compare(password, dbhash, function (err, compareres) {
                         console.log('result adter comparison - ', compareres, record);
@@ -140,25 +130,37 @@ router.post('/adduser', (req, res) => {
     var githubUrl = req.body.data.githubUrl;
     var linkedinUrl = req.body.data.linkedinUrl;
     
-    session.writeTransaction(function (transaction) {
-        var result = transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
-        // var temp =  transaction.run(
-        //   'call algo.degree.stream("user","friendOf",{direction:"outgoing"}) yield nodeId,score return algo.asNode(nodeId).firstName as name, score as followers order by followers desc'
-        // );
-        // console.log(temp)
-        return result
-    }).then(result => {
-        if (result.summary.counters.nodesCreated() === 1) {
-            console.log("query executed - ", result.summary.statement.text);
-        } else {
-            console.err('something weird happened while adding a single new user!');
-        }
-    }).catch(error => {
-        console.log('error: ', error)
-    }).finally((result) => {
-        session.close();
-        return res.json({ result });
-    });
+    // session.writeTransaction(function (transaction) {
+    //     var result = transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
+    //     // var temp =  transaction.run(
+    //     //   'call algo.degree.stream("user","friendOf",{direction:"outgoing"}) yield nodeId,score return algo.asNode(nodeId).firstName as name, score as followers order by followers desc'
+    //     // );
+    //     // console.log(temp)
+    //     return result
+    // }).then(result => {
+    //     if (result.summary.counters.nodesCreated() === 1) {
+    //         console.log("query executed - ", result.summary.statement.text);
+    //     } else {
+    //         console.err('something weird happened while adding a single new user!');
+    //     }
+    // }).catch(error => {
+    //     console.log('error: ', error)
+    // }).finally((result) => {
+    //     session.close();
+    //     return res.json({ result });
+    // });
+
+    var results = null;
+
+    session.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u")
+        .then(addNewUserResult => {
+            console.log('add user results - ', addNewUserResult.records[0].get('u'));
+            results = { ...addNewUserResult, 'addUser': addNewUserResult }
+            return res.json(results);
+        }).catch(addNewUserError => {
+            console.log('add user error - ', addNewUserError)
+        });
+
 });
 
 router.get('/user', (req, res) => {
