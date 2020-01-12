@@ -129,34 +129,28 @@ router.post('/adduser', (req, res) => {
     var email = req.body.data.email;
     var githubUrl = req.body.data.githubUrl;
     var linkedinUrl = req.body.data.linkedinUrl;
-    
-    // session.writeTransaction(function (transaction) {
-    //     var result = transaction.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u");
-    //     // var temp =  transaction.run(
-    //     //   'call algo.degree.stream("user","friendOf",{direction:"outgoing"}) yield nodeId,score return algo.asNode(nodeId).firstName as name, score as followers order by followers desc'
-    //     // );
-    //     // console.log(temp)
-    //     return result
-    // }).then(result => {
-    //     if (result.summary.counters.nodesCreated() === 1) {
-    //         console.log("query executed - ", result.summary.statement.text);
-    //     } else {
-    //         console.err('something weird happened while adding a single new user!');
-    //     }
-    // }).catch(error => {
-    //     console.log('error: ', error)
-    // }).finally((result) => {
-    //     session.close();
-    //     return res.json({ result });
-    // });
 
     var results = null;
 
-    session.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u")
+    //Add new user
+    session.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return id(u) as defaultuserid")
         .then(addNewUserResult => {
-            console.log('add user results - ', addNewUserResult.records[0].get('u'));
+            var defaultuserid = addNewUserResult.records[0].get('defaultuserid').toString();
+            console.log('add user result - ', defaultuserid);
             results = { ...addNewUserResult, 'addUser': addNewUserResult }
-            return res.json(results);
+            
+            var numOfUsers = null;
+            //Update stats node to account for the newly added user
+            session.run("match (s:stats{name:'user'}), (u:user) with s, count(u) as numOfUsers call apoc.create.setProperty(s,'count',numOfUsers) yield node return node")
+                .then(updateUserStatsResult => {
+                    numOfUsers = updateUserStatsResult.records[0].get('node');
+                    var newUserid = numOfUsers.properties['count'].toString();
+                    console.log('update user stats result - ', newUserid);
+                }).catch(updateUserStatsError => {
+                    console.log('update user stats error - ', updateUserStatsError);
+                });
+            
+            return res.json({results});
         }).catch(addNewUserError => {
             console.log('add user error - ', addNewUserError)
         });
