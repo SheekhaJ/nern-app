@@ -137,7 +137,7 @@ router.post('/adduser', (req, res) => {
         .then(addNewUserResult => {
             var defaultuserid = addNewUserResult.records[0].get('defaultuserid').toString();
             console.log('add user result - ', defaultuserid);
-            results = { ...addNewUserResult, 'addUser': addNewUserResult }
+            results = { ...results, 'addUser': addNewUserResult }
             
             var numOfUsers = null;
             //Update stats node to account for the newly added user
@@ -146,6 +146,16 @@ router.post('/adduser', (req, res) => {
                     numOfUsers = updateUserStatsResult.records[0].get('node');
                     var newUserid = numOfUsers.properties['count'].toString();
                     console.log('update user stats result - ', newUserid);
+
+                    //Set id for the newly added user based on the updated number of users from the stats node
+                    session.run("match (u:user{firstName:'" + firstName + "'}) where id(u)=" + defaultuserid + " and not exists(u.id) set u.id='" + newUserid + "' return u.id")
+                        .then(setUseridResult => {
+                            console.log('set userid - ', setUseridResult.records[0].get('u.id').toString());
+                            results = { ...results, 'newUserid': newUserid };
+                        }).catch(setUseridError => {
+                            console.log('set newuserid error - ', setUseridError);
+                    })
+
                 }).catch(updateUserStatsError => {
                     console.log('update user stats error - ', updateUserStatsError);
                 });
