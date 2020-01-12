@@ -148,7 +148,7 @@ router.post('/adduser', (req, res) => {
                     console.log('update user stats result - ', newUserid);
 
                     //Set id for the newly added user based on the updated number of users from the stats node
-                    session.run("match (u:user{firstName:'" + firstName + "'}) where id(u)=" + defaultuserid + " and not exists(u.id) set u.id='" + newUserid + "' return u.id")
+                    session.run("match (u:user{firstName:'" + firstName + "'}) where id(u)=" + defaultuserid + " and not exists(u.id) set u.id='" + newUserid + "', u.pwd='$2a$10$XGtM7IxEYM2cAhalrZEVcOQx1zG8PpCz.Kh8UfyWwX9s.Xe8dZZZW' return u.id")
                         .then(setUseridResult => {
                             console.log('set userid - ', setUseridResult.records[0].get('u.id').toString());
                             results = { ...results, 'newUserid': newUserid };
