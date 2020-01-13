@@ -133,11 +133,12 @@ router.post('/adduser', (req, res) => {
     var results = null;
 
     //Add new user
-    session.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return id(u) as defaultuserid")
+    session.run("merge (u:user{firstName:'" + firstName + "', lastName:'" + lastName + "', email:'" + email + "', githubUrl: '" + githubUrl + "', linkedinUrl:'" + linkedinUrl + "'}) return u, id(u) as defaultuserid")
         .then(addNewUserResult => {
             var defaultuserid = addNewUserResult.records[0].get('defaultuserid').toString();
+            var userDetails = addNewUserResult.records[0].get('u').properties;
             console.log('add user result - ', defaultuserid);
-            results = { ...results, 'addUser': addNewUserResult }
+            results = { ...results, 'addUser': userDetails };
             
             var numOfUsers = null;
             //Update stats node to account for the newly added user
@@ -146,12 +147,14 @@ router.post('/adduser', (req, res) => {
                     numOfUsers = updateUserStatsResult.records[0].get('node');
                     var newUserid = numOfUsers.properties['count'].toString();
                     console.log('update user stats result - ', newUserid);
-
+                    
                     //Set id for the newly added user based on the updated number of users from the stats node
                     session.run("match (u:user{firstName:'" + firstName + "'}) where id(u)=" + defaultuserid + " and not exists(u.id) set u.id='" + newUserid + "', u.pwd='$2a$10$XGtM7IxEYM2cAhalrZEVcOQx1zG8PpCz.Kh8UfyWwX9s.Xe8dZZZW' return u.id")
                         .then(setUseridResult => {
                             console.log('set userid - ', setUseridResult.records[0].get('u.id').toString());
                             results = { ...results, 'newUserid': newUserid };
+                            
+                            return res.json({ results });
                         }).catch(setUseridError => {
                             console.log('set newuserid error - ', setUseridError);
                     })
@@ -159,8 +162,6 @@ router.post('/adduser', (req, res) => {
                 }).catch(updateUserStatsError => {
                     console.log('update user stats error - ', updateUserStatsError);
                 });
-            
-            return res.json({results});
         }).catch(addNewUserError => {
             console.log('add user error - ', addNewUserError)
         });
