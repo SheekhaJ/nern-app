@@ -157,7 +157,23 @@ router.post('/adduser', (req, res) => {
                             return res.json({ results });
                         }).catch(setUseridError => {
                             console.log('set newuserid error - ', setUseridError);
-                    })
+                        })
+                    
+                    //Setting in-degree of the new user
+                    session.run("match (u:user{id:'"+newUserid+"'})<-[f:friendOf]-(v:user) with size(collect((u)<-[:friendOf]-(v))) as inDegree,u set u.inDegree = toString(inDegree) return u")
+                        .then(setInDegreeResult => {
+                            console.log('set inDegree result of new user - ', setInDegreeResult);
+                        }).catch(setInDegreeError => {
+                            console.log('set inDegree error of new user - ', setInDegreeError);
+                        })
+                    
+                    //Setting out-degree of the new user
+                    session.run("match (u:user{id:'"+newUserid+"'})-[f:friendOf]->(v:user) with size(collect((u)-[:friendOf]->(v))) as outDegree,u set u.outDegree = toString(outDegree) return u")
+                        .then(setOutDegreeResult => {
+                            console.log('set outDegree result of new user - ', setOutDegreeResult);
+                        }).catch(setOutDegreeError => {
+                            console.log('set outDegree error of new user - ', setOutDegreeError);
+                        })
 
                 }).catch(updateUserStatsError => {
                     console.log('update user stats error - ', updateUserStatsError);
