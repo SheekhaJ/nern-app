@@ -42,15 +42,17 @@ function addUserRequest(user) {
   }
 }
 
-function addUserSuccess() {
+function addUserSuccess(addUserResult) {
   return {
-    type: ADD_NEW_USER_POST_SUCCESS
+    type: ADD_NEW_USER_POST_SUCCESS,
+    payload: addUserResult
   }
 }
 
-function addUserFailure() {
+function addUserFailure(addUserError) {
   return {
-    type: ADD_NEW_USER_POST_FAILURE
+    type: ADD_NEW_USER_POST_FAILURE,
+    payload: addUserError
   }
 }
 
@@ -169,7 +171,7 @@ export const addUser = (user) => {
       .post(serverURL + "/adduser", {data: user})
       .then(response => {
         console.log("addUser action response: ", response);
-        return dispatch(addUserSuccess(response.status));
+        return dispatch(addUserSuccess(response.data));
       })
       .catch(error => {
         console.log("addUser action error response: ", error);
