@@ -29,6 +29,11 @@ const constraints = {
         url: {
             allowLocal: false
         }
+    },
+    password: {   
+        presence: {
+            allowEmpty: false
+        }
     }
 
 }
