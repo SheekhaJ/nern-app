@@ -154,7 +154,9 @@ router.post('/adduser', (req, res) => {
                             console.log('set userid - ', setUseridResult.records[0].get('u.id').toString());
                             results = { ...results, 'newUserid': newUserid };
                             
-                            return res.json({ results });
+                            // return res.json({ results });
+                            console.log('results in setting id for newly added user - ', results);
+                            return res.json(results);
                         }).catch(setUseridError => {
                             console.log('set newuserid error - ', setUseridError);
                         })
