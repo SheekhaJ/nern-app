@@ -170,7 +170,7 @@ export const addUser = (user) => {
     axios
       .post(serverURL + "/adduser", {data: user})
       .then(response => {
-        console.log("addUser action response: ", response);
+        // console.log("addUser action response: ", response);
         return dispatch(addUserSuccess(response.data));
       })
       .catch(error => {

@@ -7,25 +7,83 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
-import SnackBar from '@material-ui/core/Snackbar';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import clsx from 'clsx';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import CloseIcon from '@material-ui/icons/Close';
+import { green } from '@material-ui/core/colors';
+import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions';
 import validate from 'validate.js';
 import constraints from '../Util/constraints';
+import { makeStyles } from "@material-ui/core/styles";
 
 export function AddUser(props) {
-
-  const [open, setOpen] = useState(false);
+  const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
   const [user, setUser] = useState({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' })
   const [errors, setErrors] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  const variantIcon = {
+    success: CheckCircleIcon,
+    error: ErrorIcon,
+  };
+
+  const useStyles1 = makeStyles(theme => ({
+    success: {
+      backgroundColor: green[600],
+    },
+    error: {
+      backgroundColor: theme.palette.error.dark,
+    },
+    icon: {
+      fontSize: 20,
+    },
+    iconVariant: {
+      opacity: 0.9,
+      marginRight: theme.spacing(1),
+    },
+    message: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  }));
+
+  function SnackbarContentWrapper(props) {
+    const classes = useStyles1();
+    const { className, message, onClose, variant, ...other } = props;
+    const Icon = variantIcon[variant];
+
+    return (
+      <SnackbarContent
+        className={clsx(classes[variant], className)}
+        aria-describedby="client-snackbar"
+        message={
+          <span id="client-snackbar" className={classes.message}>
+            <Icon className={clsx(classes.icon, classes.iconVariant)} />
+            {message}
+          </span>
+        }
+        action={[
+          <IconButton key="close" aria-label="close" color="inherit" onClick={handleSnackbarClose}>
+            <CloseIcon className={classes.icon} />
+          </IconButton>,
+        ]}
+        {...other}
+      />
+    );
+  }
+
     const handleClickOpen = () => {
-      setOpen(true);
+      setOpenAddUserDialog(true);
+      console.log('init value of props - ', props.addedUserInfo.user);
     };
 
     const handleClose = () => {
-      setOpen(false);
+      setOpenAddUserDialog(false);
   };
 
   const handleSubmit = () => {
@@ -36,8 +94,8 @@ export function AddUser(props) {
       setErrors(errs)
     } else {
       props.addNewUser(user);
-      setOpen(false);
-      setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
+      // setOpen(false);
+      // setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
     }
   }
 
@@ -46,8 +104,16 @@ export function AddUser(props) {
   }
 
   useEffect(() => {
-    console.log('addedUserInfo value has been changed - ', props.addedUserInfo);
-    setOpenSnackbar(true);
+    // console.log('addedUserInfo value has been changed - ', props.addedUserInfo.user, props.addedUserInfo.user == null, props.addedUserInfo.user === null);
+    if (typeof props.addedUserInfo.user !== 'undefined' && props.addedUserInfo.user !== null) {
+      setOpenSnackbar(true);
+      setOpenAddUserDialog(false);
+      setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
+    } else if (props.addedUserInfo.user === null) {
+      setOpenSnackbar(true)
+    } else {
+      //Do nothing
+    }
   }, [props.addedUserInfo])
 
     return (
@@ -65,7 +131,7 @@ export function AddUser(props) {
           Add User
         </Button>
         <Dialog
-          open={open}
+          open={openAddUserDialog}
           onClose={handleClose}
           aria-labelledby="form-dialog-title"
         >
@@ -114,6 +180,7 @@ export function AddUser(props) {
               helperText={(errors && errors.emailAddress) ? errors.emailAddress[0] : ''}
             />
             <TextField
+              required
               margin="dense"
               id="githubUrl"
               label="GitHub URL"
@@ -126,6 +193,7 @@ export function AddUser(props) {
               helperText={(errors && errors.githubUrl) ? errors.githubUrl[0] : ''}
             />
             <TextField
+              required
               margin="dense"
               id="linkedinUrl"
               label="LinkedIn URL"
@@ -147,13 +215,17 @@ export function AddUser(props) {
             </Button>
           </DialogActions>
         </Dialog>
-        <SnackBar
-          anchorOrigin = {{ horizontal: 'left', vertical: 'bottom' }}
-          message = {`User ${user.firstName} ${user.lastName} has been added`}
-          open = {openSnackbar}
-          onClose={handleSnackbarClose}
-          autoHideDuration = {5000}>
-        </SnackBar>
+        <Snackbar anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }} open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose} >
+          <SnackbarContentWrapper onClose={handleSnackbarClose}
+            variant={typeof props.addedUserInfo.user !== 'undefined' && props.addedUserInfo.user !== null ? 'success' : 'error'}
+            message={typeof props.addedUserInfo.user !== 'undefined' && props.addedUserInfo.user !== null ? 'User has been added successfully' : "User couldn't be added successfully"}>
+          </SnackbarContentWrapper>
+        </Snackbar>
       </div>
     );
 }
