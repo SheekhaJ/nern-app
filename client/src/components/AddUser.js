@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -7,6 +7,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
+import SnackBar from '@material-ui/core/Snackbar';
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions';
 import validate from 'validate.js';
@@ -17,6 +18,7 @@ export function AddUser(props) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' })
   const [errors, setErrors] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -38,6 +40,15 @@ export function AddUser(props) {
       setUser({ firstName: '', lastName: '', email: '', githubUrl: '', linkedinUrl: '' });
     }
   }
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  }
+
+  useEffect(() => {
+    console.log('addedUserInfo value has been changed - ', props.addedUserInfo);
+    setOpenSnackbar(true);
+  }, [props.addedUserInfo])
 
     return (
       <div>
@@ -136,8 +147,21 @@ export function AddUser(props) {
             </Button>
           </DialogActions>
         </Dialog>
+        <SnackBar
+          anchorOrigin = {{ horizontal: 'left', vertical: 'bottom' }}
+          message = {`User ${user.firstName} ${user.lastName} has been added`}
+          open = {openSnackbar}
+          onClose={handleSnackbarClose}
+          autoHideDuration = {5000}>
+        </SnackBar>
       </div>
     );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    addedUserInfo: state.addUser
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -146,4 +170,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps) (AddUser)
+export default connect(mapStateToProps, mapDispatchToProps) (AddUser)
