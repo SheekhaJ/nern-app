@@ -8,6 +8,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import LoginDialog from '../LoginDialog';
 import {connect} from 'react-redux'
 import { fetchUsers } from '../../redux/actions';
+import AddUser from '../AddUser';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -81,6 +82,7 @@ function Header(props) {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
+            <AddUser/>
             <LoginDialog />
             <Typography className={classes.title} variant="button" noWrap
               onClick={() => {

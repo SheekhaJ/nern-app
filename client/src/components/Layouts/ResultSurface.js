@@ -32,7 +32,7 @@ function ResultSurface(props) {
     return (
       <div>
         <Paper className={classes.root}>
-          <AddUser></AddUser>
+          {/* <AddUser></AddUser> */}
           <Divider variant="middle" />
           {query ? (
             <Typography
