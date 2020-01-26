@@ -118,7 +118,7 @@ export function AddUser(props) {
 
     return (
       <div>
-        <Typography
+        {/* <Typography
           component="h6"
           variant="h6"
           color="primary"
@@ -126,9 +126,9 @@ export function AddUser(props) {
           display="block"
         >
           Don't see yourself or someone you know?
-        </Typography>
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
-          Add User
+        </Typography> */}
+        <Button variant="outlined" color="inherit" onClick={handleClickOpen}>
+          Sign Up
         </Button>
         <Dialog
           open={openAddUserDialog}
