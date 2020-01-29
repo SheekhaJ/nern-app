@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import UserGrid from '../Results/UserGrid';
 import Divider from '@material-ui/core/Divider';
 import Typography from "@material-ui/core/Typography";
-import AddUser from '../AddUser';
+import AddFriends from '../AddFriends';
 import { connect } from "react-redux";
 
 const useStyles = makeStyles(theme => ({
@@ -33,6 +33,7 @@ function ResultSurface(props) {
       <div>
         <Paper className={classes.root}>
           {/* <AddUser></AddUser> */}
+          <AddFriends></AddFriends>
           <Divider variant="middle" />
           {query ? (
             <Typography
