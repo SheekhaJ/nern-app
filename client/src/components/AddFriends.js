@@ -7,19 +7,25 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 function AddFriends(props) {
-    const [displayAlert, setDisplayAlert] = useState(null);
+    const [displayAlert, setDisplayAlert] = useState(false);
+    const [displayDialogBox, setDisplayDialog] = useState(false);
 
     const handleClickOpen = (e) => {
         console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
-        if (localStorage.getItem('eruid') =='undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
+        if (localStorage.getItem('eruid') == 'undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
             setDisplayAlert(true);
         } else {
             setDisplayAlert(false);
+            setDisplayDialog(true);
         }
     }
 
-    const handleAddFriendDialogClose = () => {
+    const handleAlertClose = () => {
         setDisplayAlert(false);
+    }
+
+    const handleDialogClose = () => {
+        setDisplayDialog(false);
     }
 
     return (
@@ -29,18 +35,31 @@ function AddFriends(props) {
             </Button>
             <Dialog
                 open={displayAlert}
-                onClose={handleAddFriendDialogClose}
+                onClose={handleAlertClose}
                 aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Add Friends</DialogTitle>
                 <DialogContent>
                     <DialogContentText>You must be logged in to add friends!</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleAddFriendDialogClose} color="primary">
+                    <Button onClick={handleAlertClose} color="primary">
                         Ok
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog
+                open={displayDialogBox}
+                onClose={handleDialogClose}>
+                <DialogTitle id="form-dialog-title" >Add Friends</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Select the names of your friends</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color='primary'>Done</Button>
+                </DialogActions>
+            </Dialog>
+
         </div>
     );
 }
