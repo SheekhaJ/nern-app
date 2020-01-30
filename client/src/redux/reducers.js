@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import {GET_USER_RESULT_REQUEST, GET_USER_RESULT_SUCCESS, GET_USER_RESULT_FAILURE, LOGIN_USER_FAILURE, GET_USER_FRIENDS_REQUEST, GET_USER_FRIENDS_SUCCESS, GET_USER_FRIENDS_FAILURE} from './actions'
+import {GET_USER_RESULT_REQUEST, GET_USER_RESULT_SUCCESS, GET_USER_RESULT_FAILURE, LOGIN_USER_FAILURE} from './actions'
 import { ADD_NEW_USER_POST_REQUEST, ADD_NEW_USER_POST_SUCCESS, ADD_NEW_USER_POST_FAILURE } from './actions'
 import { LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS } from './actions'
 import { GET_USER_PROFILE_REQUEST, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE } from './actions'
@@ -125,7 +125,7 @@ const userFriendsReducer = (state = {userid: '', friendsDetails: [], friendsDeta
     case GET_USER_FRIENDS_SUCCESS:
       return {
         ...state,
-        friends: action.payload
+        friendsDetails: action.payload
       }
     case GET_USER_FRIENDS_FAILURE:
       return {
