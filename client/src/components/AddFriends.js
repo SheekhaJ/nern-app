@@ -5,10 +5,13 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import ToggleButton from '@material-ui/lab/ToggleButton';
 
 function AddFriends(props) {
     const [displayAlert, setDisplayAlert] = useState(false);
     const [displayDialogBox, setDisplayDialog] = useState(false);
+    const [friends, setFriends] = useState([]);
 
     const handleClickOpen = (e) => {
         console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
@@ -26,6 +29,10 @@ function AddFriends(props) {
 
     const handleDialogClose = () => {
         setDisplayDialog(false);
+    }
+
+    const handleFriendsChange = (e, newFriends) => {
+        setFriends(newFriends);
     }
 
     return (
@@ -54,6 +61,10 @@ function AddFriends(props) {
                 <DialogTitle id="form-dialog-title" >Add Friends</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Select the names of your friends</DialogContentText>
+                    <ToggleButtonGroup value={friends} onChange={handleFriendsChange} aria-label='friends' >
+                        <ToggleButton value='friend1' aria-label='friend1'>Friend 1</ToggleButton>
+                        <ToggleButton value='friend2'>Friend 2</ToggleButton>
+                    </ToggleButtonGroup>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color='primary'>Done</Button>
