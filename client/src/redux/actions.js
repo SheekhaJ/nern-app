@@ -13,6 +13,10 @@ export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE'
 export const GET_USER_PROFILE_REQUEST = 'GET_USER_PROFILE_REQUEST'
 export const GET_USER_PROFILE_SUCCESS = 'GET_USER_PROFILE_SUCCESS'
 export const GET_USER_PROFILE_FAILURE = 'GET_USER_PROFILE_FAILURE'
+export const GET_USER_FRIENDS_REQUEST = 'GET_USER_FRIENDS_REQUEST'
+export const GET_USER_FRIENDS_SUCCESS = 'GET_USER_FRIENDS_SUCCESS'
+export const GET_USER_FRIENDS_FAILURE = 'GET_USER_FRIENDS_FAILURE'
+
 
 function getUserResultRequest(query) {
   return {
@@ -94,6 +98,27 @@ function getUserProfileSuccess(userDetails) {
 function getUserProfileFailure(error) {
   return {
     type: GET_USER_PROFILE_FAILURE,
+    payload: error
+  }
+}
+
+function getUserFriendsRequest(userid) {
+  return {
+    type: GET_USER_FRIENDS_REQUEST,
+    payload: userid
+  }
+}
+
+function getUserFriendsSuccess(friendsDetails) {
+  return {
+    type: GET_USER_FRIENDS_SUCCESS,
+    payload: friendsDetails
+  }
+}
+
+function getUserFriendsFailure(error) {
+  return {
+    type: GET_USER_FRIENDS_FAILURE,
     payload: error
   }
 }
