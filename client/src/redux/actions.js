@@ -276,3 +276,16 @@ export const getUserProfile = (userid) => {
       });
   }
 }
+
+export const getUserFriends = (userid) => {
+  return function (dispatch) {
+    dispatch(getUserFriendsRequest(userid));
+    axios
+      .post(serverURL + '/friends', { payload: userid })
+      .then(response => {
+        var res = response.data
+        console.log('res from /friends route - ', res);
+        
+    })
+  }
+}
