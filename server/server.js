@@ -49,7 +49,7 @@ router.post('/login', (req, res) => {
                     var dbhash = record.get('u.pwd')
 
                     bcrypt.compare(password, dbhash, function (err, compareres) {
-                        console.log('result adter comparison - ', compareres, record);
+                        // console.log('result after comparison - ', compareres, record);
                         if (compareres) {
                             var responseObj = {
                                 userid: record.get('u.id'),
@@ -256,6 +256,27 @@ router.post('/profile', upload.single('avatar'), (req, res) => {
     user.save();
 
     return res.json({message: 'Successful file upload!'})
+})
+
+router.post('/friends', (req, res) => {
+    userid = req.body.payload
+    session.
+        readTransaction(function (transaction) {
+            var result = transaction.run(
+                "match (u:user{id:'" + userid + "'}),(v:user) where not (u)-[:friendOf]->(v) and v.id <> '" + userid + "' return v"
+            );
+
+            return result
+        })
+        .then(function (result) {
+            // console.log('friends from database - ', result);
+            return res.json(result);
+        })
+        .catch(function (error) {
+            console.log("get user's friends error: ",error)
+        }).finally(function (result) {
+            session.close();
+        })
 })
 
 driver.close()
