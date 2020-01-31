@@ -283,9 +283,16 @@ export const getUserFriends = (userid) => {
     axios
       .post(serverURL + '/friends', { payload: userid })
       .then(response => {
-        // console.log('res from /friends route - ', response);
-        var res = response.data.records;
-        return dispatch(getUserFriendsSuccess(res));
+        console.log('res from /friends route - ', response);
+        var res = response.data.result.records;
+        var friends = []
+
+        for (var i = 0; i < res.length; i++){
+          friends.push(res[i]._fields[0].properties);
+        }
+        console.log(friends);
+
+        return dispatch(getUserFriendsSuccess(friends));
       }).catch(error => {
         console.log("get user's friends error - ", error);
         return dispatch(getUserFriendsFailure(error));
