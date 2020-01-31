@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from "@material-ui/core/Dialog";
@@ -14,7 +13,7 @@ import { getUserFriends } from '../redux/actions';
 function AddFriends(props) {
     const [displayAlert, setDisplayAlert] = useState(false);
     const [displayDialogBox, setDisplayDialog] = useState(false);
-    const [friends, setFriends] = useState([]);
+    const [friends, setFriends] = useState();
 
     const handleClickOpen = (e) => {
         console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
@@ -32,6 +31,7 @@ function AddFriends(props) {
     }
 
     const handleDialogClose = () => {
+        console.log('friends: ', friends);
         setDisplayDialog(false);
     }
 
@@ -40,7 +40,7 @@ function AddFriends(props) {
     }
 
     useEffect(() => {
-        console.log('props.friends - ', props.friends);
+        setFriends(props.friends)
     }, [props.friends])
 
     return (
@@ -69,10 +69,13 @@ function AddFriends(props) {
                 <DialogTitle id="form-dialog-title" >Add Friends</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Select the names of your friends</DialogContentText>
-                    <ToggleButtonGroup value={friends} onChange={handleFriendsChange} aria-label='friends' >
-                        <ToggleButton value='friend1' aria-label='friend1'>Friend 1</ToggleButton>
-                        <ToggleButton value='friend2'>Friend 2</ToggleButton>
-                    </ToggleButtonGroup>
+                    {friends && <ToggleButtonGroup value={friends} onChange={handleFriendsChange} aria-label='friends' >
+                        {friends.map(friend => (
+                            <ToggleButton value={friend} >
+                                {friend.firstName} {friend.lastName}
+                            </ToggleButton>
+                        ))}
+                    </ToggleButtonGroup>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color='primary'>Done</Button>
@@ -85,7 +88,7 @@ function AddFriends(props) {
 
 const mapStateToProps = (state) => {
     return {
-        friends: state.getUserFriends.friends
+        friends: state.getUserFriends.friendsDetails
     }
 }
 
