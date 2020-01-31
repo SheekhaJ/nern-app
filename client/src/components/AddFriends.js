@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -7,6 +8,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import { connect } from 'react-redux';
+import { getUserFriends } from '../redux/actions';
 
 function AddFriends(props) {
     const [displayAlert, setDisplayAlert] = useState(false);
@@ -20,6 +23,7 @@ function AddFriends(props) {
         } else {
             setDisplayAlert(false);
             setDisplayDialog(true);
+            props.getLoggedInUsersFriends(localStorage.getItem('eruid'));
         }
     }
 
@@ -34,6 +38,10 @@ function AddFriends(props) {
     const handleFriendsChange = (e, newFriends) => {
         setFriends(newFriends);
     }
+
+    useEffect(() => {
+        console.log('props.friends - ', props.friends);
+    }, [props.friends])
 
     return (
         <div>
@@ -75,4 +83,16 @@ function AddFriends(props) {
     );
 }
 
-export default AddFriends;
+const mapStateToProps = (state) => {
+    return {
+        friends: state.getUserFriends.friends
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getLoggedInUsersFriends: (userid) => dispatch(getUserFriends(userid))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddFriends);
