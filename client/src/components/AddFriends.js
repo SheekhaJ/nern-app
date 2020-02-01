@@ -9,11 +9,21 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import { connect } from 'react-redux';
 import { getUserFriends } from '../redux/actions';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+    toggleContainer: {
+        margin: theme.spacing(2, 0),
+    },
+}))
 
 function AddFriends(props) {
+    const classes = useStyles();
+
     const [displayAlert, setDisplayAlert] = useState(false);
     const [displayDialogBox, setDisplayDialog] = useState(false);
     const [friends, setFriends] = useState();
+    const [selectedFriends, setSelectedFriends] = useState(()=>[]);
 
     const handleClickOpen = (e) => {
         console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
@@ -31,13 +41,16 @@ function AddFriends(props) {
     }
 
     const handleDialogClose = () => {
-        console.log('friends: ', friends);
         setDisplayDialog(false);
     }
 
     const handleFriendsChange = (e, newFriends) => {
-        setFriends(newFriends);
+        setSelectedFriends(newFriends);
     }
+
+    useEffect(() => {
+        console.log('selected friends are ', selectedFriends);
+    }, [selectedFriends]);
 
     useEffect(() => {
         setFriends(props.friends)
@@ -69,13 +82,15 @@ function AddFriends(props) {
                 <DialogTitle id="form-dialog-title" >Add Friends</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Select the names of your friends</DialogContentText>
-                    {friends && <ToggleButtonGroup value={friends} onChange={handleFriendsChange} aria-label='friends' >
-                        {friends.map(friend => (
-                            <ToggleButton value={friend} >
-                                {friend.firstName} {friend.lastName}
-                            </ToggleButton>
-                        ))}
-                    </ToggleButtonGroup>}
+                    <div className={classes.toggleContainer}>
+                        {friends && <ToggleButtonGroup value={selectedFriends} onChange={handleFriendsChange} aria-label='friends' >
+                            {friends.map(friend => (
+                                <ToggleButton value={friend} >
+                                    {friend.firstName} {friend.lastName}
+                                </ToggleButton>
+                            ))}
+                        </ToggleButtonGroup>}
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color='primary'>Done</Button>
