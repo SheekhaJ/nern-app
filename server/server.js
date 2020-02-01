@@ -271,13 +271,21 @@ router.post('/friends', (req, res) => {
         })
         .then(function (result) {
             // console.log('friends from database - ', result);
-            return res.json({result});
+            return res.json({ result });
         })
         .catch(function (error) {
-            console.log("get user's friends error: ",error)
+            console.log("get user's friends error: ", error)
         }).finally(function (result) {
             session.close();
         })
+});
+
+router.post('/addfriends', (req, res) => {
+    console.log('at /addfriends route - ', req.body);
+    var userid = req.body['userid']
+    var friendsids = req.body['friendsids']
+    console.log('userid and friendsids are ', userid, friendsids);
+    return res.json({ 'message': 'Success' });
 })
 
 driver.close()
