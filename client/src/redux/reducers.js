@@ -4,6 +4,7 @@ import { ADD_NEW_USER_POST_REQUEST, ADD_NEW_USER_POST_SUCCESS, ADD_NEW_USER_POST
 import { LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS } from './actions'
 import { GET_USER_PROFILE_REQUEST, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE } from './actions'
 import { GET_USER_FRIENDS_REQUEST, GET_USER_FRIENDS_SUCCESS, GET_USER_FRIENDS_FAILURE } from './actions'
+import { ADD_FRIENDS_POST_REQUEST, ADD_FRIENDS_POST_SUCCESS, ADD_FRIENDS_POST_FAILURE } from './actions'
 
 const initUserResultState = {
   loading: true,
@@ -137,11 +138,34 @@ const userFriendsReducer = (state = {userid: '', friendsDetails: [], friendsDeta
   }
 }
 
+const addFriendsReducer = (state = { userid: '', addFriendsIds: [], addFriendsError: '' }, action) => {
+  switch (action.type) {
+    case ADD_FRIENDS_POST_REQUEST:
+      return {
+        ...state,
+        userid: action.payload['userid'],
+        addFriendsIds: action.payload['friendsids']
+      }
+    case ADD_FRIENDS_POST_SUCCESS:
+      return {
+        ...state
+      }
+    case ADD_FRIENDS_POST_FAILURE:
+      return {
+        ...state,
+        addFriendsError: action.payload
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   getUsers: userResultReducer,
   loginUser: loginUserReducer,
   addUser: addUserReducer,
   getUserProfile: userProfileReducer,
-  getUserFriends: userFriendsReducer
+  getUserFriends: userFriendsReducer,
+  addFriends: addFriendsReducer
 });
 export default rootReducer
