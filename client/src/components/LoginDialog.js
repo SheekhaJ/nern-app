@@ -172,9 +172,9 @@ function LoginDialog(props) {
           onClose={handleLoginDialogClickClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+          <DialogTitle id="form-dialog-title">Log In</DialogTitle>
           <DialogContent>
-            <DialogContentText>Log In</DialogContentText>
+            {/* <DialogContentText>Log In</DialogContentText> */}
             <TextField
               autoFocus required
               margin="dense"
