@@ -8,7 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import { connect } from 'react-redux';
-import { getUserFriends } from '../redux/actions';
+import { getUserFriends, addUserFriends } from '../redux/actions';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +41,9 @@ function AddFriends(props) {
     }
 
     const handleDialogSubmit = () => {
-        console.log('selected friends are ', selectedFriends);
+        // console.log('selected friends are ', selectedFriends);
+        var selecteduserids = (selectedFriends).map(selectedFriend => selectedFriend['id'])
+        props.addFriends(localStorage.getItem('eruid'), selecteduserids)
         setDisplayDialog(false);
     }
 
@@ -115,7 +117,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getLoggedInUsersFriends: (userid) => dispatch(getUserFriends(userid))
+        getLoggedInUsersFriends: (userid) => dispatch(getUserFriends(userid)),
+        addFriends: (loggedinuserid, selectedfriendsids) => dispatch(addUserFriends(loggedinuserid, selectedfriendsids))
     }
 }
 
