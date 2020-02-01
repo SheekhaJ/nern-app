@@ -16,7 +16,9 @@ export const GET_USER_PROFILE_FAILURE = 'GET_USER_PROFILE_FAILURE'
 export const GET_USER_FRIENDS_REQUEST = 'GET_USER_FRIENDS_REQUEST'
 export const GET_USER_FRIENDS_SUCCESS = 'GET_USER_FRIENDS_SUCCESS'
 export const GET_USER_FRIENDS_FAILURE = 'GET_USER_FRIENDS_FAILURE'
-
+export const ADD_FRIENDS_POST_REQUEST = 'ADD_FRIENDS_POST_REQUEST'
+export const ADD_FRIENDS_POST_SUCCESS = 'ADD_FRIENDS_POST_SUCCESS'
+export const ADD_FRIENDS_POST_FAILURE = 'ADD_FRIENDS_POST_FAILURE'
 
 function getUserResultRequest(query) {
   return {
@@ -120,6 +122,27 @@ function getUserFriendsFailure(error) {
   return {
     type: GET_USER_FRIENDS_FAILURE,
     payload: error
+  }
+}
+
+function addFriendsRequest(loggedinuserid, selectedfriendsids) {
+  return {
+    type: ADD_FRIENDS_POST_REQUEST,
+    payload: {userid: loggedinuserid, friendsids: selectedfriendsids}
+  }
+}
+
+function addFriendsSuccess(addFriendsResult) {
+  return {
+    type: ADD_FRIENDS_POST_SUCCESS, 
+    payload: addFriendsResult
+  }
+}
+
+function addFriendsFailure(addFriendsError) {
+  return {
+    type: ADD_FRIENDS_POST_FAILURE, 
+    payload: addFriendsError
   }
 }
 
@@ -283,14 +306,14 @@ export const getUserFriends = (userid) => {
     axios
       .post(serverURL + '/friends', { payload: userid })
       .then(response => {
-        console.log('res from /friends route - ', response);
+        // console.log('res from /friends route - ', response);
         var res = response.data.result.records;
         var friends = []
 
         for (var i = 0; i < res.length; i++){
           friends.push(res[i]._fields[0].properties);
         }
-        console.log(friends);
+        // console.log(friends);
 
         return dispatch(getUserFriendsSuccess(friends));
       }).catch(error => {
