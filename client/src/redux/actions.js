@@ -322,3 +322,22 @@ export const getUserFriends = (userid) => {
     })
   }
 }
+
+export const addUserFriends = (loggedinuserid, selectedfriendsids) => {
+  return function (dispatch) {
+    dispatch(addFriendsRequest(loggedinuserid, selectedfriendsids));
+    axios.post(serverURL + "/addfriends", { userid: loggedinuserid, friendsids: selectedfriendsids })
+      .then(response => {
+        if (response.data) {
+          console.log('response from backend - ', response.data);
+          return dispatch(addFriendsSuccess(response.data));
+        } else {
+          return dispatch(addFriendsFailure({ 'error while adding friends': response }))
+        }
+      })
+      .catch(error => {
+        console.log("add friends error - ", error);
+        return dispatch(addFriendsFailure({ 'error while adding friends': error }))
+      })
+  }
+}
