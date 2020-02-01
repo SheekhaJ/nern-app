@@ -26,7 +26,7 @@ function AddFriends(props) {
     const [selectedFriends, setSelectedFriends] = useState(()=>[]);
 
     const handleClickOpen = (e) => {
-        console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
+        // console.log('add friend button clicked! type ', localStorage.getItem('eruid') === 'undefined');
         if (localStorage.getItem('eruid') == 'undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
             setDisplayAlert(true);
         } else {
@@ -40,6 +40,11 @@ function AddFriends(props) {
         setDisplayAlert(false);
     }
 
+    const handleDialogSubmit = () => {
+        console.log('selected friends are ', selectedFriends);
+        setDisplayDialog(false);
+    }
+
     const handleDialogClose = () => {
         setDisplayDialog(false);
     }
@@ -48,9 +53,9 @@ function AddFriends(props) {
         setSelectedFriends(newFriends);
     }
 
-    useEffect(() => {
-        console.log('selected friends are ', selectedFriends);
-    }, [selectedFriends]);
+    // useEffect(() => {
+    //     console.log('selected friends are ', selectedFriends);
+    // }, [selectedFriends]);
 
     useEffect(() => {
         setFriends(props.friends)
@@ -93,7 +98,8 @@ function AddFriends(props) {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDialogClose} color='primary'>Done</Button>
+                    <Button onClick={handleDialogSubmit} color='primary'>Add</Button>
+                    <Button onClick={handleDialogClose} color="primary" >Cancel</Button>
                 </DialogActions>
             </Dialog>
 
