@@ -300,6 +300,14 @@ router.post('/addfriends', (req, res) => {
             console.log('addfriends error - ', addFriendsError);
         })
 
+    // 3) Create the new relation with the newly created id
+    session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'abc1'},v) yield rel return rel")
+        .then(createFriendsRelationResult => {
+            console.log('create friends relation result - ', createFriendsRelationResult);
+        }).catch(createFriendsRelationError => {
+            console.log('create friends relation error - ', createFriendsRelationError);
+        })
+
     return res.json({ 'message': numOfFriendsRelations});
 })
 
