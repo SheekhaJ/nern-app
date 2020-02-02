@@ -281,11 +281,26 @@ router.post('/friends', (req, res) => {
 });
 
 router.post('/addfriends', (req, res) => {
-    console.log('at /addfriends route - ', req.body);
     var userid = req.body['userid']
     var friendsids = req.body['friendsids']
-    console.log('userid and friendsids are ', userid, friendsids);
-    return res.json({ 'message': 'Success' });
+    // console.log('userid and friendsids are ', userid, friendsids);
+
+    // 1) Get number of friendsOf relations
+    var numOfFriendsRelations = null;
+    var newFriendId = null;
+    session.run("match (s:stats{name:'friendOf'}) return s.count")
+        .then(friendsCountResult => {
+            numOfFriendsRelations = friendsCountResult.records[0].get('s.count').toString()
+
+            // 2) Create new incremented id to assign to the new relation
+            newFriendId = 'friend' + (parseInt(numOfFriendsRelations) + 1)
+
+            console.log('number of friends: ', newFriendId);
+        }).catch(addFriendsError => {
+            console.log('addfriends error - ', addFriendsError);
+        })
+
+    return res.json({ 'message': numOfFriendsRelations});
 })
 
 driver.close()
