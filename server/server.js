@@ -290,29 +290,36 @@ router.post('/addfriends', (req, res) => {
 
         // 1) Get number of friendsOf relations
         var numOfFriendsRelations = null;
-        var newFriendId = null;
+        var newFriendRelationId = null;
         session.run("match (s:stats{name:'friendOf'}) return s.count")
             .then(friendsCountResult => {
                 numOfFriendsRelations = friendsCountResult.records[0].get('s.count').toString()
 
                 // 2) Create new incremented id to assign to the new relation
-                newFriendId = 'friend' + (parseInt(numOfFriendsRelations) + 1)
+                newFriendRelationId = 'friend' + (parseInt(numOfFriendsRelations) + 1)
 
-                console.log('number of friends: ', newFriendId);
+                // console.log('number of friends: ', newFriendRelationId);
+
+                // 3) Create the new relation with the newly created id
+                session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'" + newFriendRelationId + "'},v) yield rel return rel")
+                    .then(createFriendsRelationResult => {
+                        console.log('create friends relation result - ', createFriendsRelationResult);
+
+                        // 4) Update the stats friendOf node with the new count of relationships
+                        session.run("match (s:stats{name:'friendOf'}), ()-[f:friendOf]-() with s, count(f) as countFriendRels call apoc.create.setProperty(s,'count',countFriendRels)yield node return node")
+                            .then(updateFriendOfRelsStatsResult => {
+                                console.log('updateFriendOfRelsStatsResult - ', updateFriendOfRelsStatsResult)
+                            }).catch(updateFriendOfRelsStatsError => {
+                                console.log('updateFriendOfRelsStatsError - ', updateFriendOfRelsStatsError);
+                            })
+                        return res.json(createFriendsRelationResult)
+                    }).catch(createFriendsRelationError => {
+                        console.log('create friends relation error - ', createFriendsRelationError);
+                    })
             }).catch(addFriendsError => {
                 console.log('addfriends error - ', addFriendsError);
             })
-
-        // 3) Create the new relation with the newly created id
-        session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'abc1'},v) yield rel return rel")
-            .then(createFriendsRelationResult => {
-                console.log('create friends relation result - ', createFriendsRelationResult);
-            }).catch(createFriendsRelationError => {
-                console.log('create friends relation error - ', createFriendsRelationError);
-            })
     }
-
-    return res.json({ 'message': numOfFriendsRelations });
 })
 
 driver.close()
