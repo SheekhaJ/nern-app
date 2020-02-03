@@ -254,37 +254,43 @@ export const getUserProfile = (userid) => {
     axios
       .post(serverURL + '/user', { payload: userid })
       .then(response => {
-        var res = response.data.records;
+        var res = response.data
+        // console.log('response from getuserprofile - ', res);
+
+        var userProfileInfo = new Map(), languagesInfo = [], friendsInfo = new Map();
         
-        if (res[0]._fields[0].labels[0] === "user") {
-          var properties = res[0]._fields[0].properties;
-          var userProfileInfo = new Map();
-          userProfileInfo['firstName'] = properties.firstName
-          userProfileInfo['lastName'] = properties.lastName
-          userProfileInfo['email'] = properties.email
-          userProfileInfo['githubUrl'] = properties.githubUrl
-          userProfileInfo['linkedinUrl'] = properties.linkedinUrl
+        if (res['userProfile'].records[0]._fields[0].labels == 'user') {
+          userProfileInfo['firstName'] = res['userProfile'].records[0]._fields[0].properties['firstName'];
+          userProfileInfo['lastName'] = res['userProfile'].records[0]._fields[0].properties['lastName'];
+          userProfileInfo['email'] = res['userProfile'].records[0]._fields[0].properties['email'];
+          userProfileInfo['githubUrl'] = res['userProfile'].records[0]._fields[0].properties['githubUrl'];
+          userProfileInfo['linkedinUrl'] = res['userProfile'].records[0]._fields[0].properties['linkedinUrl'];
         }
 
-        var friendsInfo = new Map()
-        var languagesInfo = []
-        for (var i = 0; i < res.length; i++){
-          var r = res[i];
-          if (r._fields[1].type === "friendOf") {
-            var properties = r._fields[2].properties;
-            var friendInfo = new Map()
-            friendInfo['firstName'] = properties.firstName;
-            friendInfo['lastName'] = properties.lastName;
-            friendInfo['email'] = properties.email;
-            friendInfo['githubUrl'] = properties.githubUrl;
-            friendInfo['linkedinUrl'] = properties.linkedinUrl;
-            
-            friendsInfo.set(properties.id, friendInfo);
-          } else if (r._fields[1].type === "knows") {
-            var properties = r._fields[2].properties;
-            if (!languagesInfo.includes(properties.name))
-              languagesInfo.push(properties.name)
-          }
+        if (res['languages'].records[0].length > 0) {
+          var tempRecords = res['languages'].records
+          tempRecords.forEach(tempRecord => {
+            if (tempRecord._fields[1].type == 'knows') {
+              languagesInfo.push(tempRecord._fields[2].properties['name'])
+            }
+          });
+        }
+
+        if (res['friends'].records[0].length > 0) {
+          var tempRecords = res['friends'].records
+          
+          tempRecords.forEach(tempRecord => {
+            var friendInfo = new Map();
+            if (tempRecord._fields[1].type == 'friendOf' && tempRecord._fields[2].labels == 'user') {
+              friendInfo['firstName'] = tempRecord._fields[2].properties['firstName'];
+              friendInfo['lastName'] = tempRecord._fields[2].properties['lastName']
+              friendInfo['email'] = tempRecord._fields[2].properties['email'];
+              friendInfo['githubUrl'] = tempRecord._fields[2].properties['githubUrl']
+              friendInfo['linkedinUrl'] = tempRecord._fields[2].properties['linkedinUrl'];
+
+              friendsInfo.set(tempRecord._fields[2].properties['id'], friendInfo);
+            }
+          })
         }
 
         var userProfileBundle = {
@@ -292,6 +298,7 @@ export const getUserProfile = (userid) => {
           friends: friendsInfo,
           languages: languagesInfo
         }
+
         return dispatch(getUserProfileSuccess(userProfileBundle));
       }).catch(error => {
         console.log("get user profile error: ", error);
