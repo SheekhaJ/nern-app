@@ -31,6 +31,12 @@ var userProfileSchema = new Schema({
 });
 var userProfile = mongoose.model('Profiles', userProfileSchema);
 
+async function tempSleep(ms) {
+    await new Promise((resolve) => {
+        setTimeout(resolve, ms)
+    })
+}
+
 router.post('/login', (req, res) => {
     var email = req.body.loginusername;
     var password = req.body.loginpassword;
@@ -284,9 +290,20 @@ router.post('/addfriends', (req, res) => {
     var userid = req.body['userid']
     var friendsids = req.body['friendsids']
     // console.log('userid and friendsids are ', userid, friendsids);
+    // var results = new Map();
 
     for (var i = 0; i < friendsids.length; i++) {
         var friendid = friendsids[i];
+
+        // session.run("match (u:user{id:'" + userid + "'})-[f:friendOf]-(v:user{id:'" + friendid + "'}) return f.id")
+        //     .then(existingFriendRelResult => {
+        //         if (existingFriendRelResult.records.length>0){
+        //             results[friendid] = existingFriendRelResult.records[0].get('f.id').toString();
+        //         }
+        //         console.log('results[friendid] - ', results);
+        //     }).catch(existingFriendRelError => {
+        //         console.log('existing friend error - ', existingFriendRelError);
+        // })
 
         // 1) Get number of friendsOf relations
         var numOfFriendsRelations = null;
@@ -298,8 +315,8 @@ router.post('/addfriends', (req, res) => {
                 // 2) Create new incremented id to assign to the new relation
                 newFriendRelationId = 'friend' + (parseInt(numOfFriendsRelations) + 1)
 
-                // console.log('number of friends: ', newFriendRelationId);
-
+                // results[friendid] = newFriendRelationId;
+                
                 // 3) Create the new relation with the newly created id
                 session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'" + newFriendRelationId + "'},v) yield rel return rel")
                     .then(createFriendsRelationResult => {
@@ -308,11 +325,16 @@ router.post('/addfriends', (req, res) => {
                         // 4) Update the stats friendOf node with the new count of relationships
                         session.run("match (s:stats{name:'friendOf'}), ()-[f:friendOf]-() with s, count(f) as countFriendRels call apoc.create.setProperty(s,'count',countFriendRels)yield node return node")
                             .then(updateFriendOfRelsStatsResult => {
-                                console.log('updateFriendOfRelsStatsResult - ', updateFriendOfRelsStatsResult)
+                                console.log('updateFriendOfRelsStatsResult - ', updateFriendOfRelsStatsResult.summary)
                             }).catch(updateFriendOfRelsStatsError => {
                                 console.log('updateFriendOfRelsStatsError - ', updateFriendOfRelsStatsError);
                             })
-                        return res.json(createFriendsRelationResult)
+                        
+                        // if (friendsids.length == results.length) {
+                        //     console.log('returning results - ', results);
+                        //     return res.json(results);
+                        // }
+                        
                     }).catch(createFriendsRelationError => {
                         console.log('create friends relation error - ', createFriendsRelationError);
                     })
@@ -320,6 +342,9 @@ router.post('/addfriends', (req, res) => {
                 console.log('addfriends error - ', addFriendsError);
             })
     }
+
+    tempSleep(1400);
+    return res.json({ 'message': 'Success' });
 })
 
 driver.close()
