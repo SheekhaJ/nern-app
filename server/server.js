@@ -209,41 +209,49 @@ router.get('/user', (req, res) => {
 router.post("/user", (req, res) => {
     userid = req.body.payload;
     console.log('userid is "' + userid + '"');
-    // if (userid != "") {
-      session
-        .readTransaction(function(transaction) {
-          var result = transaction.run(
-            "match (u:user{id:'"+userid+"'})-[r]-(f) return u,r,f"
-            );
-            
-          return result
+    var result = null;
+
+    const getUserProfilePromise =  session.run("match (u:user{id:'" + userid + "'}) return u")
+    .then(function(getUserProfileResult) {
+        result = { ...result, userProfile: getUserProfileResult };
+        return result
+    }).catch(function(error) {
+        console.log("get user profile error 3213: " + error);
+    }).finally((result) => {
+        session.close();
+    });
+
+    const getUserLanguagesPromise = session.run("match (u:user{id:'" + userid + "'})-[k:knows]->(v) return u,k,v")
+    .then(function (getUserLanguagesResult) {
+        result = { ...result, languages: getUserLanguagesResult };
+        return result
+    }).catch(function (getUserLanguagesError) {
+        console.log('get user languages error - ', getUserLanguagesError);
+    }).finally(function (result) {
+        session.close();
+    });
+
+    const getUserFriendsPromise = session.run("match (u:user{id:'" + userid + "'})-[f:friendOf]->(v) return u,f,v")
+    .then(function (getUserFriendsResult) {
+        result = { ...result, friends: getUserFriendsResult };
+        return result
+    }).catch(function (getUserFriendsError) {
+        console.log('get user friends error - ', getUserFriendsError);
+    }).finally(function (result) {
+        session.close();
+    });
+    
+    Promise.all([getUserProfilePromise, getUserLanguagesPromise, getUserFriendsPromise])
+        .then(function (values) {
+            var results = values[2];
+            console.log('results after promises.all - ', results)
+            return res.json(results);
+        }).catch(function (valuesError) {
+            console.log('error after promises.all is ', valuesError);
+        }).finally(function (valuesResult) {
+            console.log('finally at the end of promises.all');
         })
-        .then(function(result) {
-            // console.log('profile result from server: ', result);
-            return res.json(result);
-        })
-        .catch(function(error) {
-          console.log("get user profile error 3213: " + error);
-        }).finally((result) => {
-            session.close();
-        });
-    // } else {
-    //   res.json({ res: q });
-    // }
-  // session
-  //   .readTransaction(function(transaction) {
-  //     var result = transaction.run(
-  //       "match (u:user) return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc"
-  //     );
-  //     return result;
-  //   })
-  //   .then(function(result) {
-  //     session.close();
-  //     return res.json({ result });
-  //   })
-  //   .catch(function(error) {
-  //     console.log("users error: " + error);
-  //   });
+    
 });
 
 
