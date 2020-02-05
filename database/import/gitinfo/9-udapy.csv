@@ -1,0 +1,20 @@
+Repo ID,Repo Full Name,Repo HTML URL,Repo Languages
+107073962,udapy/AI_Game_Agent,https://github.com/udapy/AI_Game_Agent,{'Python': 66513}
+110667898,udapy/AI_planning,https://github.com/udapy/AI_planning,{'Python': 115210}
+110664625,udapy/AI_Recognizer,https://github.com/udapy/AI_Recognizer,"{'HTML': 497222, 'Jupyter Notebook': 210588, 'Python': 30387}"
+107073592,udapy/AI_Sudoku,https://github.com/udapy/AI_Sudoku,{'Python': 21913}
+110658859,udapy/BlockChain,https://github.com/udapy/BlockChain,{'Java': 1602}
+178301092,udapy/CarND-Advanced-Lane-Lines,https://github.com/udapy/CarND-Advanced-Lane-Lines,"{'Jupyter Notebook': 1458194, 'Shell': 672}"
+187750240,udapy/CarND-Behavioral-Cloning-P3,https://github.com/udapy/CarND-Behavioral-Cloning-P3,"{'Python': 5223, 'Shell': 672}"
+198563281,udapy/CarND-Extended-Kalman-Filter-Project,https://github.com/udapy/CarND-Extended-Kalman-Filter-Project,"{'C++': 3356458, 'C': 41359, 'CMake': 7486, 'Shell': 1831}"
+177449953,udapy/CarND-LaneLines-P1,https://github.com/udapy/CarND-LaneLines-P1,"{'Jupyter Notebook': 4486960, 'Shell': 711}"
+187517709,udapy/CarND-Traffic-Sign-Classifier-Project,https://github.com/udapy/CarND-Traffic-Sign-Classifier-Project,"{'Jupyter Notebook': 1168419, 'Shell': 815}"
+163480500,udapy/cleverhans,https://github.com/udapy/cleverhans,"{'Python': 746308, 'Shell': 2831, 'Dockerfile': 242}"
+163150020,udapy/deep-learning,https://github.com/udapy/deep-learning,"{'Jupyter Notebook': 11057475, 'Python': 100060}"
+158990549,udapy/ML-projects,https://github.com/udapy/ML-projects,"{'Jupyter Notebook': 62520997, 'HTML': 6312735, 'Python': 84076}"
+152781119,udapy/ml_group_implementations,https://github.com/udapy/ml_group_implementations,"{'Jupyter Notebook': 614474, 'Python': 106}"
+169185324,udapy/PythonRobotics,https://github.com/udapy/PythonRobotics,"{'Jupyter Notebook': 2330524, 'Python': 495351, 'Shell': 186}"
+187758141,udapy/self-driving-car-sim,https://github.com/udapy/self-driving-car-sim,"{'C#': 1245540, 'ShaderLab': 340613, 'HLSL': 17852, 'GLSL': 7914, 'JavaScript': 1140}"
+168779106,udapy/self-help,https://github.com/udapy/self-help,{}
+107077021,udapy/Udacity-Artificial-Intelligence,https://github.com/udapy/Udacity-Artificial-Intelligence,"{'Python': 187844, 'Jupyter Notebook': 127993}"
+163149723,udapy/Udacity-Deep-Learning,https://github.com/udapy/Udacity-Deep-Learning,"{'HTML': 5321179, 'Jupyter Notebook': 3083861, 'Python': 60503, 'Shell': 486}"
