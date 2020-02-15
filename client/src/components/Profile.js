@@ -7,10 +7,11 @@ import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { connect } from 'react-redux';
-import { fetchUsers } from '../redux/actions';
+import { fetchUsers, getUserRatings } from '../redux/actions';
 import Rating from '@material-ui/lab/Rating';
 import Link from '@material-ui/core/Link';
 import axios from 'axios';
+import SkillRating from '../components/SkillRating';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -34,6 +35,7 @@ function Profile(props) {
     const classes = useStyles();
     
     const [userprofileid, setUserprofileid] = useState(props.userprofileid);
+    const [userRatings, setUserRatings] = useState(props.ratings);
 
     const userProfileInfo = Object.assign({}, props.userProfile)
     const languages = Object.assign([], props.languages)
@@ -50,7 +52,13 @@ function Profile(props) {
 
     useEffect(() => {
         props.usergridProfileIdCallback(userprofileid);
+        props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
     }, [userprofileid])
+
+    useEffect(() => {
+        console.log('user ratings from backend - ', props.ratings);
+        setUserRatings(props.ratings);
+    }, [props.ratings]);
 
     useEffect(() => {
         console.log('result users from query: ', props.users);
@@ -147,10 +155,11 @@ function Profile(props) {
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
                                 Languages: {languages.map((language) => (
-                                    <div>
-                                        <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
-                                        <Rating name="half-rating" value={3.25} precision={0.25} />
-                                    </div>
+                                    // <div>
+                                    //     <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
+                                    //     <Rating name="half-rating" value={3.25} precision={0.25} />
+                                    // </div>
+                                    <SkillRating language={language} rating={3} ratings={userRatings} />
                                 ))}
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
@@ -176,13 +185,15 @@ function Profile(props) {
 
 const mapStateToProps = (state) => {
     return {
-        users: state.getUsers.users
+        users: state.getUsers.users,
+        ratings: state.getUserRatings.ratings
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getQueryResultUsers: (query) => dispatch(fetchUsers(query))
+        getQueryResultUsers: (query) => dispatch(fetchUsers(query)),
+        getUserRatings: (loggedinuserid, selectedprofileuserid) => dispatch(getUserRatings(loggedinuserid, selectedprofileuserid))
     }
 }
 
