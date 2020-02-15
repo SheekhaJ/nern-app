@@ -333,18 +333,26 @@ export const getUserFriends = (userid) => {
 export const addUserFriends = (loggedinuserid, selectedfriendsids) => {
   return function (dispatch) {
     dispatch(addFriendsRequest(loggedinuserid, selectedfriendsids));
-    axios.post(serverURL + "/addfriends", { userid: loggedinuserid, friendsids: selectedfriendsids })
-      .then(response => {
-        if (response.data) {
-          console.log('response from backend - ', response.data);
-          return dispatch(addFriendsSuccess(response.data));
-        } else {
-          return dispatch(addFriendsFailure({ 'error while adding friends': response }))
-        }
-      })
-      .catch(error => {
-        console.log("add friends error - ", error);
-        return dispatch(addFriendsFailure({ 'error while adding friends': error }))
-      })
+    var dispatchResponses = [];
+    
+    for (var i = 0; i < selectedfriendsids.length; i++){
+      var selectedfriendid = selectedfriendsids[i];
+      axios.post(serverURL + "/addfriends", { userid: loggedinuserid, friendsids: selectedfriendid })
+        .then(response => {
+          if (response.data) {
+            console.log('response from backend - ', response.data);
+            dispatchResponses.push(response.data);
+            // return dispatch(addFriendsSuccess(response.data));
+          } else {
+            return dispatch(addFriendsFailure({ 'error while adding friends': response }))
+          }
+        })
+        .catch(error => {
+          console.log("add friends error - ", error);
+          return dispatch(addFriendsFailure({ 'error while adding friends': error }))
+        })
+    }
+    return dispatch(addFriendsSuccess(dispatchResponses))
+    
   }
 }
