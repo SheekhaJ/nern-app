@@ -5,6 +5,7 @@ import { LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS } from './actions'
 import { GET_USER_PROFILE_REQUEST, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE } from './actions'
 import { GET_USER_FRIENDS_REQUEST, GET_USER_FRIENDS_SUCCESS, GET_USER_FRIENDS_FAILURE } from './actions'
 import { ADD_FRIENDS_POST_REQUEST, ADD_FRIENDS_POST_SUCCESS, ADD_FRIENDS_POST_FAILURE } from './actions'
+import {GET_USER_RATING_REQUEST, GET_USER_RATING_SUCCESS, GET_USER_RATING_FAILURE} from './actions'
 
 const initUserResultState = {
   loading: true,
@@ -160,12 +161,36 @@ const addFriendsReducer = (state = { userid: '', addFriendsIds: [], addFriendsEr
   }
 }
 
+const getUserRatingsReducer = (state = { loggedinuserid: '', profileuserid: '', ratings: [], getUserRatingError: '' }, action) => {
+  switch (action.type) {
+    case GET_USER_RATING_REQUEST:
+      return {
+        ...state,
+        loggedinuserid: action.payload['loggedinuserid'],
+        profileuserid: action.payload['profileuserid']
+      }
+    case GET_USER_RATING_SUCCESS:
+      return {
+        ...state,
+        ratings: action.payload['ratings']
+      }
+    case GET_USER_RATING_FAILURE:
+      return {
+        ...state,
+        getUserRatingError: action.payload
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   getUsers: userResultReducer,
   loginUser: loginUserReducer,
   addUser: addUserReducer,
   getUserProfile: userProfileReducer,
   getUserFriends: userFriendsReducer,
-  addFriends: addFriendsReducer
+  addFriends: addFriendsReducer,
+  getUserRatings: getUserRatingsReducer
 });
 export default rootReducer
