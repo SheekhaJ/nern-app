@@ -19,6 +19,9 @@ export const GET_USER_FRIENDS_FAILURE = 'GET_USER_FRIENDS_FAILURE'
 export const ADD_FRIENDS_POST_REQUEST = 'ADD_FRIENDS_POST_REQUEST'
 export const ADD_FRIENDS_POST_SUCCESS = 'ADD_FRIENDS_POST_SUCCESS'
 export const ADD_FRIENDS_POST_FAILURE = 'ADD_FRIENDS_POST_FAILURE'
+export const GET_USER_RATING_REQUEST = 'GET_USER_RATING_REQUEST'
+export const GET_USER_RATING_SUCCESS = 'GET_USER_RATING_SUCCESS'
+export const GET_USER_RATING_FAILURE = 'GET_USER_RATING_FAILURE'
 
 function getUserResultRequest(query) {
   return {
@@ -143,6 +146,27 @@ function addFriendsFailure(addFriendsError) {
   return {
     type: ADD_FRIENDS_POST_FAILURE, 
     payload: addFriendsError
+  }
+}
+
+function getUserRatingRequest(loggeduserid, selectedprofileuserid) {
+  return {
+    type: GET_USER_RATING_REQUEST,
+    payload: {loggedinuserid: loggeduserid, profileuserid: selectedprofileuserid}
+  }
+}
+
+function getUserRatingSuccess(getUserRatingResult) {
+  return {
+    type: GET_USER_RATING_SUCCESS,
+    payload: getUserRatingResult
+  }
+}
+
+function getUserRatingError(getUserRatingError) {
+  return {
+    type: GET_USER_RATING_FAILURE,
+    payload: getUserRatingError
   }
 }
 
@@ -354,5 +378,19 @@ export const addUserFriends = (loggedinuserid, selectedfriendsids) => {
     }
     return dispatch(addFriendsSuccess(dispatchResponses))
     
+  }
+}
+
+export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
+  return function (dispatch) {
+    dispatch(getUserRatingRequest(loggeduserid, selectedprofileuserid))
+    axios.post(serverURL + '/getuserratings', { loggedinuserid: loggeduserid, profileuserid: selectedprofileuserid })
+      .then(response => {
+        console.log('/getuserrating response - ', response.data);
+        return dispatch(getUserRatingSuccess(response.data));
+      }).catch(error => {
+        console.log('/getuserrating error - ', error);
+        return dispatch(getUserRatingError(error));
+    })
   }
 }
