@@ -10,12 +10,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 function SkillRating(props) {
     const [value, setValue] = useState(props.rating);
     const [displayAlert, setDisplayAlert] = useState(false);
-    const [profileuserid, setProfileuserid] = useState(props.selectedprofileuserid);
-    // const [userRatings, setUserRatings] = useState(props.ratings);
-
 
     const handleLanguageClick = (e) => {
-        // console.log('event triggered by ', e.currentTarget);
         if (localStorage.getItem('eruid') == 'undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
             setDisplayAlert(true);
         } else {
@@ -29,14 +25,8 @@ function SkillRating(props) {
 
     useEffect(() => {
         console.log('loggedinuserid - ', props);
-        // props.getUserRatings(localStorage.getItem('eruid'), props.selectedprofileuserid)
     }, [])
 
-    // useEffect(() => {
-    //     console.log('user ratings from backend - ', props.ratings);
-    // }, [props.ratings]);
-
-    // console.log('props in skill rating component - ', props);
     return (
         <div>
             <Dialog
@@ -59,18 +49,4 @@ function SkillRating(props) {
     );
 }
 
-// const mapStateToProps = (state) => {
-//     console.log('mapstatetoprops in skillrating - ', state);
-//     return {
-//         ratings: state.getUserRatings.ratings
-//     }
-// }
-
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         getUserRatings: (loggedinuserid, selectedprofileuserid) => dispatch(getUserRatings(loggedinuserid, selectedprofileuserid))
-//     }
-// }
-
-// export default connect(mapStateToProps, mapDispatchToProps)(SkillRating);
 export default SkillRating;
