@@ -305,7 +305,7 @@ export const getUserProfile = (userid) => {
         var res = response.data
         // console.log('response from getuserprofile - ', res);
 
-        var userProfileInfo = new Map(), languagesInfo = [], friendsInfo = new Map();
+        var userProfileInfo = new Map(), languagesInfo = new Map(), friendsInfo = new Map();
         
         if (res['userProfile'].records[0]._fields[0].labels == 'user') {
           userProfileInfo['firstName'] = res['userProfile'].records[0]._fields[0].properties['firstName'];
@@ -319,7 +319,7 @@ export const getUserProfile = (userid) => {
           var tempRecords = res['languages'].records
           tempRecords.forEach(tempRecord => {
             if (tempRecord._fields[1].type == 'knows') {
-              languagesInfo.push(tempRecord._fields[2].properties['name'])
+              languagesInfo[tempRecord._fields[2].properties['id']] = tempRecord._fields[2].properties['name']
             }
           });
         }
