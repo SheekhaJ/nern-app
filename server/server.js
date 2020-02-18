@@ -374,6 +374,22 @@ router.post('/addfriends', (req, res) => {
     // return res.json({ 'message': 'Success' });
 })
 
+router.post('/getuserratings', (req, res) => {
+    // console.log('payload at /getuserratings - ', req);
+    var loggedinuserid = req.body.loggedinuserid
+    var profileuserid = req.body.profileuserid
+    session.readTransaction(function (transaction) {
+        return transaction.run("match (u:user{id:'"+loggedinuserid+"'})-[r:rates]->(v:user{id:'"+profileuserid+"'}) return u,r,v")
+    }).then(function (result) {
+        // console.log('/getuserratings result - ', result);
+        return res.json({ result });
+    }).catch(function (error) {
+        console.log('/getuserratings error - ', error);
+    }).finally(() => {
+        session.close();
+    })
+})
+
 driver.close()
 
 app.use(bodyparser.urlencoded({ extended: true }));
