@@ -212,7 +212,7 @@ router.post("/user", (req, res) => {
     var result = null;
 
     const getUserProfilePromise =  session.run("match (u:user{id:'" + userid + "'}) return u")
-    .then(function(getUserProfileResult) {
+    .then(function (getUserProfileResult) {
         result = { ...result, userProfile: getUserProfileResult };
         return result
     }).catch(function(error) {
@@ -244,12 +244,12 @@ router.post("/user", (req, res) => {
     Promise.all([getUserProfilePromise, getUserLanguagesPromise, getUserFriendsPromise])
         .then(function (values) {
             var results = values[2];
-            console.log('results after promises.all - ', results)
+            // console.log('/user route results after promises.all - ', results)
             return res.json(results);
         }).catch(function (valuesError) {
-            console.log('error after promises.all is ', valuesError);
+            console.log('/user route error after promises.all is ', valuesError);
         }).finally(function (valuesResult) {
-            console.log('finally at the end of promises.all');
+            console.log('/user route finally at the end of promises.all');
         })
     
 });
@@ -298,10 +298,10 @@ router.post('/addfriends', (req, res) => {
     var userid = req.body['userid']
     var friendsids = req.body['friendsids']
     // console.log('userid and friendsids are ', userid, friendsids);
-    // var results = new Map();
+    var results = new Map();
 
-    for (var i = 0; i < friendsids.length; i++) {
-        var friendid = friendsids[i];
+    // for (var i = 0; i < friendsids.length; i++) {
+        var friendid = friendsids;
 
         // session.run("match (u:user{id:'" + userid + "'})-[f:friendOf]-(v:user{id:'" + friendid + "'}) return f.id")
         //     .then(existingFriendRelResult => {
@@ -316,28 +316,34 @@ router.post('/addfriends', (req, res) => {
         // 1) Get number of friendsOf relations
         var numOfFriendsRelations = null;
         var newFriendRelationId = null;
-        session.run("match (s:stats{name:'friendOf'}) return s.count")
+        var createFriendRelationPromise = null, updateStatsPromise = null;
+
+        // var friendCountPromise = session.run("match (s:stats{name:'friendOf'}) return s.count")
+    session.run("match (s:stats{name:'friendOf'}) return s.count")
             .then(friendsCountResult => {
                 numOfFriendsRelations = friendsCountResult.records[0].get('s.count').toString()
 
                 // 2) Create new incremented id to assign to the new relation
                 newFriendRelationId = 'friend' + (parseInt(numOfFriendsRelations) + 1)
 
-                // results[friendid] = newFriendRelationId;
+                results[friendid] = newFriendRelationId;
                 
                 // 3) Create the new relation with the newly created id
+                // createFriendRelationPromise = session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'" + newFriendRelationId + "'},v) yield rel return rel")
                 session.run("match (u:user{id:'" + userid + "'}), (v:user{id:'" + friendid + "'}) where not exists((u)-[:friendOf]->(v)) with u,v call apoc.create.relationship(u,'friendOf',{id:'" + newFriendRelationId + "'},v) yield rel return rel")
                     .then(createFriendsRelationResult => {
                         console.log('create friends relation result - ', createFriendsRelationResult);
 
                         // 4) Update the stats friendOf node with the new count of relationships
+                        // updateStatsPromise = session.run("match (s:stats{name:'friendOf'}), ()-[f:friendOf]-() with s, count(f) as countFriendRels call apoc.create.setProperty(s,'count',countFriendRels)yield node return node")
                         session.run("match (s:stats{name:'friendOf'}), ()-[f:friendOf]-() with s, count(f) as countFriendRels call apoc.create.setProperty(s,'count',countFriendRels)yield node return node")
                             .then(updateFriendOfRelsStatsResult => {
                                 console.log('updateFriendOfRelsStatsResult - ', updateFriendOfRelsStatsResult.summary)
                             }).catch(updateFriendOfRelsStatsError => {
                                 console.log('updateFriendOfRelsStatsError - ', updateFriendOfRelsStatsError);
                             })
-                        
+
+                        return res.json(results);
                         // if (friendsids.length == results.length) {
                         //     console.log('returning results - ', results);
                         //     return res.json(results);
@@ -349,10 +355,23 @@ router.post('/addfriends', (req, res) => {
             }).catch(addFriendsError => {
                 console.log('addfriends error - ', addFriendsError);
             })
-    }
+         
+        // console.log('in here i - ', i);
+        // Promise.all([friendCountPromise, createFriendRelationPromise, updateStatsPromise])
+        //     .then(valuesResult => {
+        //         console.log('/addfriends result at the end of Promise.all - ', valuesResult);
+        //     }).catch(valuesError => {
+        //         console.log('/addfriends error at the end of Promise.all - ', valuesError)
+        //     }).finally(() => {
+        //         console.log('/addfriends finally - and of promise.all - ');
+        //         session.close();
+        // })
+        
+    // }
 
-    tempSleep(1400);
-    return res.json({ 'message': 'Success' });
+    // tempSleep(1400);
+    // if (results.length ==)
+    // return res.json({ 'message': 'Success' });
 })
 
 driver.close()
