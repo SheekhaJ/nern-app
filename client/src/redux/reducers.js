@@ -5,7 +5,8 @@ import { LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS } from './actions'
 import { GET_USER_PROFILE_REQUEST, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE } from './actions'
 import { GET_USER_FRIENDS_REQUEST, GET_USER_FRIENDS_SUCCESS, GET_USER_FRIENDS_FAILURE } from './actions'
 import { ADD_FRIENDS_POST_REQUEST, ADD_FRIENDS_POST_SUCCESS, ADD_FRIENDS_POST_FAILURE } from './actions'
-import {GET_USER_RATING_REQUEST, GET_USER_RATING_SUCCESS, GET_USER_RATING_FAILURE} from './actions'
+import { GET_USER_RATING_REQUEST, GET_USER_RATING_SUCCESS, GET_USER_RATING_FAILURE } from './actions'
+import { UPDATE_USER_LANG_RATING_REQUEST, UPDATE_USER_LANG_RATING_SUCCESS, UPDATE_USER_LANG_RATING_FAILURE } from './actions'
 
 const initUserResultState = {
   loading: true,
@@ -184,6 +185,25 @@ const getUserRatingsReducer = (state = { loggedinuserid: '', profileuserid: '', 
   }
 }
 
+const updateUserLangRatingReducer = (state = { language: '', updatedRating: '', updateUserRatingError: '' }, action) => {
+  switch (action.type) {
+    case UPDATE_USER_LANG_RATING_REQUEST:
+    case UPDATE_USER_LANG_RATING_SUCCESS:  
+      return {
+        ...state,
+        language: action.payload['language'],
+        updatedRating: action.payload['updatedRating']
+      }
+    case UPDATE_USER_LANG_RATING_FAILURE:
+      return {
+        ...state,
+        updateUserRatingError: action.payload,
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   getUsers: userResultReducer,
   loginUser: loginUserReducer,
@@ -191,6 +211,7 @@ const rootReducer = combineReducers({
   getUserProfile: userProfileReducer,
   getUserFriends: userFriendsReducer,
   addFriends: addFriendsReducer,
-  getUserRatings: getUserRatingsReducer
+  getUserRatings: getUserRatingsReducer,
+  updateUserLanguageRating: updateUserLangRatingReducer
 });
 export default rootReducer
