@@ -35,20 +35,15 @@ function Profile(props) {
     const classes = useStyles();
     
     const [userprofileid, setUserprofileid] = useState(props.userprofileid);
-    const [userRatings, setUserRatings] = useState(props.ratings);
+    const [userRatings, setUserRatings] = useState([]);
 
     const userProfileInfo = Object.assign({}, props.userProfile)
-    const languages = Object.assign([], props.languages)
+    const languages = Object.assign({}, props.languages)
     
     var friends = new Map();
     props.friends.forEach((value, key) => {
         friends[key] = value
     })
-
-    const handleLanguageClick = (query) => {
-        console.log('language query: ', query);
-        props.getQueryResultUsers(query);
-    }
 
     useEffect(() => {
         props.usergridProfileIdCallback(userprofileid);
@@ -59,10 +54,6 @@ function Profile(props) {
         console.log('user ratings from backend - ', props.ratings);
         setUserRatings(props.ratings);
     }, [props.ratings]);
-
-    useEffect(() => {
-        console.log('result users from query: ', props.users);
-    }, [props.users])
 
     return (
         <div>
@@ -151,16 +142,15 @@ function Profile(props) {
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
-
+                        
                         <Grid item xs={8} justify="flex-start">
                             <Typography gutterBottom variant="h5" component="h6">
-                                Languages: {languages.map((language) => (
-                                    // <div>
-                                    //     <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{language}</Button>
-                                    //     <Rating name="half-rating" value={3.25} precision={0.25} />
-                                    // </div>
-                                    <SkillRating language={language} rating={3} ratings={userRatings} />
-                                ))}
+                                Languages:
+                            {
+                                Object.keys(languages).map((langid, index) => (
+                                    <SkillRating language={languages[langid]} ratings={userRatings} key={langid}></SkillRating>
+                                ))
+                            }
                             </Typography>
                             <Divider variant="middle" orientation="horizontal" />
                         </Grid>
