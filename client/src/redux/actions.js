@@ -22,6 +22,9 @@ export const ADD_FRIENDS_POST_FAILURE = 'ADD_FRIENDS_POST_FAILURE'
 export const GET_USER_RATING_REQUEST = 'GET_USER_RATING_REQUEST'
 export const GET_USER_RATING_SUCCESS = 'GET_USER_RATING_SUCCESS'
 export const GET_USER_RATING_FAILURE = 'GET_USER_RATING_FAILURE'
+export const UPDATE_USER_LANG_RATING_REQUEST = 'UPDATE_USER_LANG_RATING_REQUEST'
+export const UPDATE_USER_LANG_RATING_SUCCESS = 'UPDATE_USER_LANG_RATING_SUCCESS'
+export const UPDATE_USER_LANG_RATING_FAILURE = 'UPDATE_USER_LANG_RATING_FAILURE'
 
 function getUserResultRequest(query) {
   return {
@@ -167,6 +170,27 @@ function getUserRatingError(getUserRatingError) {
   return {
     type: GET_USER_RATING_FAILURE,
     payload: getUserRatingError
+  }
+}
+
+function updateUserLangRatingRequest(lang, newRating) {
+  return {
+    type: UPDATE_USER_LANG_RATING_REQUEST,
+    payload: {language: lang, updatedRating: newRating}
+  }
+}
+
+function updateUserLangRatingSuccess(lang, newRating) {
+  return {
+    type: UPDATE_USER_LANG_RATING_SUCCESS,
+    payload: {language: lang, updatedRating: newRating}
+  }
+}
+
+function updateUserLangRatingFailure(lang, sentRating) {
+  return {
+    type: UPDATE_USER_LANG_RATING_FAILURE,
+    payload: {language: lang, failedRating: sentRating}
   }
 }
 
@@ -391,6 +415,20 @@ export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
       }).catch(error => {
         console.log('/getuserrating error - ', error);
         return dispatch(getUserRatingError(error));
+    })
+  }
+}
+
+export const updateUserRatings = (lang, rating) => {
+  return function (dispatch) {
+    dispatch(updateUserLangRatingRequest(lang, rating));
+    axios.post(serverURL + '/updateuserratings', { language: lang, updatedRating: rating })
+      .then(response => {
+        console.log('/updateuserrating response - ', response.data)
+        return dispatch(updateUserLangRatingSuccess(response.data));
+      }).catch(error => {
+        console.log('/updateuserrating error - ', error);
+        return dispatch(updateUserLangRatingFailure(error));
     })
   }
 }
