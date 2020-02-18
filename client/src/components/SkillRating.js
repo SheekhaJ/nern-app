@@ -6,26 +6,24 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { Typography } from '@material-ui/core';
 
 function SkillRating(props) {
     const [value, setValue] = useState(props.rating);
     const [displayAlert, setDisplayAlert] = useState(false);
 
-    const handleLanguageClick = (e) => {
+    const handleRatingsChange = (e, newValue) => {
         if (localStorage.getItem('eruid') == 'undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
             setDisplayAlert(true);
         } else {
-            setDisplayAlert(false);
+            console.log('newval: ', newValue, props.language);
+            setValue(newValue);
         }
     }
 
     const handleAlertClose = () => {
         setDisplayAlert(false);
     }
-
-    useEffect(() => {
-        console.log('loggedinuserid - ', props);
-    }, [])
 
     return (
         <div>
@@ -43,8 +41,13 @@ function SkillRating(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{props.language}</Button>
-            <Rating name="half-rating" value={value} onChange={(e,newValue) => (console.log('newval: ',newValue), setValue(newValue))} />
+            <div id={props.key}>
+                {/* <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{props.language}</Button> */}
+                <Typography color="primary">{props.language}</Typography>
+                <Rating name="half-rating" value={value}
+                    // onClick={handleRatingsClick}
+                    onChange={handleRatingsChange} />
+            </div>
         </div>
     );
 }
