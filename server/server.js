@@ -209,48 +209,46 @@ router.get('/user', (req, res) => {
 router.post("/user", (req, res) => {
     userid = req.body.payload;
     console.log('userid is "' + userid + '"');
-    var result = null;
 
-    const getUserProfilePromise =  session.run("match (u:user{id:'" + userid + "'}) return u")
-    .then(function (getUserProfileResult) {
-        result = { ...result, userProfile: getUserProfileResult };
-        return result
+    session.readTransaction((transaction) => {
+        var result = null;
+        var temp = transaction.run("match (u:user{id:'" + userid + "'}) return u")
+            .then(txresult1 => {
+                console.log('txresult1 - ', txresult1.records[0]);
+                result = { ...result, userProfile: txresult1 };
+                return result
+            })
+            .then(() => {
+                return transaction.run("match (u:user{id:'" + userid + "'})-[k:knows]->(v) return u,k,v")
+                    .then(txresult2 => {
+                        console.log('txresult2 - ', txresult2.records);
+                        result = { ...result, languages: txresult2 };
+                        return result
+                    }).catch(txerror2 => {
+                        console.log('tx2 error - ', txerror2);
+                    })
+            })
+            .then(() => {
+                return transaction.run("match (u:user{id:'" + userid + "'})-[f:friendOf]->(v) return u,f,v")
+                    .then(txresult3 => {
+                        console.log('txresult3 - ', txresult3.records);
+                        result = { ...result, friends: txresult3 };
+                        return result
+                    }).catch(txerror3 => {
+                        console.log('error from tx3 - ', txerror3);
+                    })
+            }).catch(txerror1 => {
+                console.log('tx1 error - ', txerror1);
+        })
+        return temp
+    }).then(result => {
+        // console.log('combined result - ', result)
+        return res.json({ result });
     }).catch(function(error) {
-        console.log("get user profile error 3213: " + error);
+        console.log("/user error: " + error);
     }).finally((result) => {
         session.close();
     });
-
-    const getUserLanguagesPromise = session.run("match (u:user{id:'" + userid + "'})-[k:knows]->(v) return u,k,v")
-    .then(function (getUserLanguagesResult) {
-        result = { ...result, languages: getUserLanguagesResult };
-        return result
-    }).catch(function (getUserLanguagesError) {
-        console.log('get user languages error - ', getUserLanguagesError);
-    }).finally(function (result) {
-        session.close();
-    });
-
-    const getUserFriendsPromise = session.run("match (u:user{id:'" + userid + "'})-[f:friendOf]->(v) return u,f,v")
-    .then(function (getUserFriendsResult) {
-        result = { ...result, friends: getUserFriendsResult };
-        return result
-    }).catch(function (getUserFriendsError) {
-        console.log('get user friends error - ', getUserFriendsError);
-    }).finally(function (result) {
-        session.close();
-    });
-    
-    Promise.all([getUserProfilePromise, getUserLanguagesPromise, getUserFriendsPromise])
-        .then(function (values) {
-            var results = values[2];
-            // console.log('/user route results after promises.all - ', results)
-            return res.json(results);
-        }).catch(function (valuesError) {
-            console.log('/user route error after promises.all is ', valuesError);
-        }).finally(function (valuesResult) {
-            console.log('/user route finally at the end of promises.all');
-        })
     
 });
 
@@ -381,7 +379,7 @@ router.post('/getuserratings', (req, res) => {
     session.readTransaction(function (transaction) {
         return transaction.run("match (u:user{id:'"+loggedinuserid+"'})-[r:rates]->(v:user{id:'"+profileuserid+"'}) return u,r,v")
     }).then(function (result) {
-        // console.log('/getuserratings result - ', result);
+        console.log('/getuserratings result - ', result);
         return res.json({ result });
     }).catch(function (error) {
         console.log('/getuserratings error - ', error);
