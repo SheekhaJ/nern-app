@@ -47,14 +47,25 @@ function Profile(props) {
 
     useEffect(() => {
         props.usergridProfileIdCallback(userprofileid);
-        props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
+        // props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
     }, [userprofileid])
+
+    useEffect(() => {
+        if (props.userProfile != []) {
+            // console.log('userprofile is not empty - ', props.userProfile)
+            setTimeout(() => {
+                props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
+            }, 2500)
+        } 
+    }, [props.userProfile])
 
     useEffect(() => {
         console.log('user ratings from backend - ', props.ratings);
         setUserRatings(props.ratings);
     }, [props.ratings]);
 
+    // console.log('userprofileinfo - ', props, userProfileInfo);
+    
     return (
         <div>
             {userProfileInfo && friends && languages && (
