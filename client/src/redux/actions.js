@@ -302,12 +302,12 @@ export const getUserProfile = (userid) => {
     axios
       .post(serverURL + '/user', { payload: userid })
       .then(response => {
-        var res = response.data
-        // console.log('response from getuserprofile - ', res);
+        var res = response.data['result']
+        console.log('response from getuserprofile - ', res);
 
         var userProfileInfo = new Map(), languagesInfo = new Map(), friendsInfo = new Map();
         
-        if (res['userProfile'].records[0]._fields[0].labels == 'user') {
+        if (res['userProfile'].records[0]._fields[0].labels === 'user') {
           userProfileInfo['firstName'] = res['userProfile'].records[0]._fields[0].properties['firstName'];
           userProfileInfo['lastName'] = res['userProfile'].records[0]._fields[0].properties['lastName'];
           userProfileInfo['email'] = res['userProfile'].records[0]._fields[0].properties['email'];
@@ -316,20 +316,20 @@ export const getUserProfile = (userid) => {
         }
 
         if (res['languages'].records[0].length > 0) {
-          var tempRecords = res['languages'].records
-          tempRecords.forEach(tempRecord => {
-            if (tempRecord._fields[1].type == 'knows') {
+          var tempRecords1 = res['languages'].records
+          tempRecords1.forEach(tempRecord => {
+            if (tempRecord._fields[1].type === 'knows') {
               languagesInfo[tempRecord._fields[2].properties['id']] = tempRecord._fields[2].properties['name']
             }
           });
         }
 
         if (res['friends'].records[0].length > 0) {
-          var tempRecords = res['friends'].records
+          var tempRecords2 = res['friends'].records
           
-          tempRecords.forEach(tempRecord => {
+          tempRecords2.forEach(tempRecord => {
             var friendInfo = new Map();
-            if (tempRecord._fields[1].type == 'friendOf' && tempRecord._fields[2].labels == 'user') {
+            if (tempRecord._fields[1].type === 'friendOf' && tempRecord._fields[2].labels === 'user') {
               friendInfo['firstName'] = tempRecord._fields[2].properties['firstName'];
               friendInfo['lastName'] = tempRecord._fields[2].properties['lastName']
               friendInfo['email'] = tempRecord._fields[2].properties['email'];
@@ -402,20 +402,6 @@ export const addUserFriends = (loggedinuserid, selectedfriendsids) => {
     }
     return dispatch(addFriendsSuccess(dispatchResponses))
     
-  }
-}
-
-export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
-  return function (dispatch) {
-    dispatch(getUserRatingRequest(loggeduserid, selectedprofileuserid))
-    axios.post(serverURL + '/getuserratings', { loggedinuserid: loggeduserid, profileuserid: selectedprofileuserid })
-      .then(response => {
-        console.log('/getuserrating response - ', response.data);
-        return dispatch(getUserRatingSuccess(response.data));
-      }).catch(error => {
-        console.log('/getuserrating error - ', error);
-        return dispatch(getUserRatingError(error));
-    })
   }
 }
 
