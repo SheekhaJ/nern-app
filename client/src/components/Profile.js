@@ -35,10 +35,10 @@ function Profile(props) {
     const classes = useStyles();
     
     const [userprofileid, setUserprofileid] = useState(props.userprofileid);
-    const [userRatings, setUserRatings] = useState([]);
 
     const userProfileInfo = Object.assign({}, props.userProfile)
     const languages = Object.assign({}, props.languages)
+    const ratings = Object.assign({},props.ratings)
     
     var friends = new Map();
     props.friends.forEach((value, key) => {
@@ -47,25 +47,20 @@ function Profile(props) {
 
     useEffect(() => {
         props.usergridProfileIdCallback(userprofileid);
-        // props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
     }, [userprofileid])
 
     useEffect(() => {
         if (props.userProfile != []) {
-            // console.log('userprofile is not empty - ', props.userProfile)
             setTimeout(() => {
                 props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
-            }, 2500)
+            }, 500)
         } 
     }, [props.userProfile])
 
     useEffect(() => {
-        console.log('user ratings from backend - ', props.ratings);
-        setUserRatings(props.ratings);
+        console.log('props.ratings user ratings from backend - ', props.ratings, ratings);
     }, [props.ratings]);
 
-    // console.log('userprofileinfo - ', props, userProfileInfo);
-    
     return (
         <div>
             {userProfileInfo && friends && languages && (
@@ -158,8 +153,8 @@ function Profile(props) {
                             <Typography gutterBottom variant="h5" component="h6">
                                 Languages:
                             {
-                                Object.keys(languages).map((langid, index) => (
-                                    <SkillRating language={languages[langid]} ratings={userRatings} key={langid}></SkillRating>
+                                    Object.keys(languages).map((langid, index) => (
+                                        <SkillRating language={languages[langid]} ratings={Object.assign({},props.ratings)} key={langid}></SkillRating>
                                 ))
                             }
                             </Typography>
