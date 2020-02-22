@@ -411,11 +411,17 @@ export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
     dispatch(getUserRatingRequest(loggeduserid, selectedprofileuserid))
     axios.post(serverURL + '/getuserratings', { loggedinuserid: loggeduserid, profileuserid: selectedprofileuserid })
       .then(response => {
-        console.log('/getuserrating response - ', response);
-        if (response.records) {
-          ratings = response.records[0]._fields[1].properties;
+        console.log('/getuserrating response - ', response.data['result']);
+        var res = response.data['result']
+
+        if (res.records) {
+          var temp = res.records[0]._fields[1].properties;
+          // console.log('temp is ', temp)
+          Object.entries(temp).forEach(entry => {
+            ratings[entry[0]] = entry[1]
+          })
         }
-        console.log('ratings properties - ', ratings);
+        
         return dispatch(getUserRatingSuccess(ratings));
       }).catch(error => {
         console.log('/getuserrating error - ', error);
