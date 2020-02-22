@@ -173,7 +173,7 @@ const getUserRatingsReducer = (state = { loggedinuserid: '', profileuserid: '', 
     case GET_USER_RATING_SUCCESS:
       return {
         ...state,
-        ratings: action.payload['ratings']
+        ratings: action.payload
       }
     case GET_USER_RATING_FAILURE:
       return {
