@@ -7,6 +7,7 @@ import { GET_USER_FRIENDS_REQUEST, GET_USER_FRIENDS_SUCCESS, GET_USER_FRIENDS_FA
 import { ADD_FRIENDS_POST_REQUEST, ADD_FRIENDS_POST_SUCCESS, ADD_FRIENDS_POST_FAILURE } from './actions'
 import { GET_USER_RATING_REQUEST, GET_USER_RATING_SUCCESS, GET_USER_RATING_FAILURE } from './actions'
 import { UPDATE_USER_LANG_RATING_REQUEST, UPDATE_USER_LANG_RATING_SUCCESS, UPDATE_USER_LANG_RATING_FAILURE } from './actions'
+import {GET_SKILL_REQUEST, GET_SKILL_SUCCESS, GET_SKILL_FAILURE} from './actions'
 
 const initUserResultState = {
   loading: true,
@@ -204,6 +205,27 @@ const updateUserLangRatingReducer = (state = { language: '', updatedRating: '', 
   }
 }
 
+const getSkillsReducer = (state = { skills: [], error: '' }, action) => {
+  switch (action.type) {
+    case GET_SKILL_REQUEST:
+      return {
+        ...state
+      }
+    case GET_SKILL_SUCCESS:
+      return {
+        ...state,
+        skills: action.payload
+      }
+    case GET_SKILL_FAILURE:
+      return {
+        ...state,
+        error: action.payload
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   getUsers: userResultReducer,
   loginUser: loginUserReducer,
@@ -213,5 +235,6 @@ const rootReducer = combineReducers({
   addFriends: addFriendsReducer,
   getUserRatings: getUserRatingsReducer,
   updateUserLanguageRating: updateUserLangRatingReducer
+  getSkills: getSkillsReducer
 });
 export default rootReducer
