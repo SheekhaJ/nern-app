@@ -25,6 +25,9 @@ export const GET_USER_RATING_FAILURE = 'GET_USER_RATING_FAILURE'
 export const UPDATE_USER_LANG_RATING_REQUEST = 'UPDATE_USER_LANG_RATING_REQUEST'
 export const UPDATE_USER_LANG_RATING_SUCCESS = 'UPDATE_USER_LANG_RATING_SUCCESS'
 export const UPDATE_USER_LANG_RATING_FAILURE = 'UPDATE_USER_LANG_RATING_FAILURE'
+export const GET_SKILL_REQUEST = 'GET_SKILL_REQUEST'
+export const GET_SKILL_SUCCESS = 'GET_SKILL_SUCCESS'
+export const GET_SKILL_FAILURE = 'GET_SKILL_FAILURE'
 
 function getUserResultRequest(query) {
   return {
@@ -191,6 +194,26 @@ function updateUserLangRatingFailure(lang, sentRating) {
   return {
     type: UPDATE_USER_LANG_RATING_FAILURE,
     payload: {language: lang, failedRating: sentRating}
+  }
+}
+
+function getSkillRequest() {
+  return {
+    type: GET_SKILL_REQUEST
+  }
+}
+
+function getSkillSuccess(skills) {
+  return {
+    type: GET_SKILL_SUCCESS,
+    payload: skills
+  }
+}
+
+function getSkillFailure(error) {
+  return {
+    type: GET_SKILL_FAILURE,
+    payload: error
   }
 }
 
@@ -411,7 +434,7 @@ export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
     dispatch(getUserRatingRequest(loggeduserid, selectedprofileuserid))
     axios.post(serverURL + '/getuserratings', { loggedinuserid: loggeduserid, profileuserid: selectedprofileuserid })
       .then(response => {
-        console.log('/getuserrating response - ', response.data['result']);
+        // console.log('/getuserrating response - ', response.data['result']);
         var res = response.data['result']
 
         if (res.records) {
@@ -440,6 +463,21 @@ export const updateUserRatings = (lang, rating) => {
       }).catch(error => {
         console.log('/updateuserrating error - ', error);
         return dispatch(updateUserLangRatingFailure(error));
+    })
+  }
+}
+
+export const getSkills = () => {
+  return function (dispatch) {
+    dispatch(getSkillRequest());
+    axios.get(serverURL + '/getskill')
+      .then(response => {
+        var res = response.data
+        console.log('response for /getskill - ', res);
+        return dispatch(getSkillSuccess(res));
+      }).catch(error => {
+        console.log('error for /getskill - ', error);
+        return dispatch(getSkillFailure(error));
     })
   }
 }
