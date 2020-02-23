@@ -32,7 +32,6 @@ function SkillRating(props) {
                 obj[key] = props.ratings[key]
                 return obj
             }, {})
-        // console.log('temp - ', temp, lang, parseInt(temp[lang]))
         setValue(parseInt(temp[lang]))
     }, [props.ratings])
 
@@ -52,10 +51,10 @@ function SkillRating(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <div id={props.key}>
+            <div>
                 {/* <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{props.language}</Button> */}
                 <Typography color="primary">{props.language}</Typography>
-                <Rating name="half-rating" value={value}
+                <Rating name={lang} value={value}
                     // onClick={handleRatingsClick}
                     onChange={handleRatingsChange} />
             </div>
