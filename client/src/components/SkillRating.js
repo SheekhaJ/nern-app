@@ -9,14 +9,15 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { Typography } from '@material-ui/core';
 
 function SkillRating(props) {
-    const [value, setValue] = useState(props.rating);
+    const [lang, setLang] = useState(props.language.replace(' ', '').replace('#', 'Sharp').replace('++', 'PlusPlus').replace('-', '_'))
+    const [value, setValue] = useState(0)
     const [displayAlert, setDisplayAlert] = useState(false);
 
     const handleRatingsChange = (e, newValue) => {
         if (localStorage.getItem('eruid') == 'undefined' && localStorage.getItem('erAuthFirstName') == 'undefined' && localStorage.getItem('erAuthLastName') == 'undefined') {
             setDisplayAlert(true);
         } else {
-            console.log('newval: ', newValue, props.language);
+            console.log('newval: ', e.currentTarget.innerHTML, newValue, lang);
             setValue(newValue);
         }
     }
@@ -24,6 +25,16 @@ function SkillRating(props) {
     const handleAlertClose = () => {
         setDisplayAlert(false);
     }
+
+    useEffect(() => {
+        var temp = Object.keys(props.ratings).filter(key => lang == key)
+            .reduce((obj, key) => {
+                obj[key] = props.ratings[key]
+                return obj
+            }, {})
+        // console.log('temp - ', temp, lang, parseInt(temp[lang]))
+        setValue(parseInt(temp[lang]))
+    }, [props.ratings])
 
     return (
         <div>
