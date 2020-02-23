@@ -49,21 +49,9 @@ function Profile(props) {
         props.usergridProfileIdCallback(userprofileid);
     }, [userprofileid])
 
-    useEffect(() => {
-        if (props.userProfile != []) {
-            setTimeout(() => {
-                props.getUserRatings(localStorage.getItem('eruid'), userprofileid);
-            }, 500)
-        } 
-    }, [props.userProfile])
-
-    useEffect(() => {
-        console.log('props.ratings user ratings from backend - ', props.ratings, ratings);
-    }, [props.ratings]);
-
     return (
         <div>
-            {userProfileInfo && friends && languages && (
+            {userProfileInfo && friends && languages && ratings && (
                 <Grid
                     container
                     spacing={3}
@@ -154,7 +142,7 @@ function Profile(props) {
                                 Languages:
                             {
                                     Object.keys(languages).map((langid, index) => (
-                                        <SkillRating language={languages[langid]} ratings={Object.assign({},props.ratings)} key={langid}></SkillRating>
+                                        <SkillRating language={languages[langid]} ratings={ratings} key={langid}></SkillRating>
                                 ))
                             }
                             </Typography>
@@ -181,15 +169,13 @@ function Profile(props) {
 
 const mapStateToProps = (state) => {
     return {
-        users: state.getUsers.users,
-        ratings: state.getUserRatings.ratings
+        users: state.getUsers.users
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getQueryResultUsers: (query) => dispatch(fetchUsers(query)),
-        getUserRatings: (loggedinuserid, selectedprofileuserid) => dispatch(getUserRatings(loggedinuserid, selectedprofileuserid))
+        getQueryResultUsers: (query) => dispatch(fetchUsers(query))
     }
 }
 
