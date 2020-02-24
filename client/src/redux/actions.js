@@ -252,7 +252,7 @@ export const fetchUsers = (query='') => {
         } else {
           dispatch(getUserResultRequest(query));
           axios
-            .get(serverURL + "/query?q=" + query)
+            .get(serverURL + "/query?q=" + encodeURIComponent(query))
             .then(response => {
               var res = response.data.result.records;
               var results = []
@@ -439,7 +439,6 @@ export const getUserRatings = (loggeduserid, selectedprofileuserid) => {
 
         if (res.records) {
           var temp = res.records[0]._fields[1].properties;
-          // console.log('temp is ', temp)
           Object.entries(temp).forEach(entry => {
             ratings[entry[0]] = entry[1]
           })
@@ -472,9 +471,16 @@ export const getSkills = () => {
     dispatch(getSkillRequest());
     axios.get(serverURL + '/getskill')
       .then(response => {
-        var res = response.data
-        console.log('response for /getskill - ', res);
-        return dispatch(getSkillSuccess(res));
+        var res = response.data.result.records
+        var skills = new Map()
+        console.log('resp for /getskill - ', res);
+
+        for (var i = 0; i < res.length; i++){
+          skills[res[i]._fields[0].properties['id']] = res[i]._fields[0].properties['name'];
+        }
+
+        console.log('response for /getskill - ', skills);
+        return dispatch(getSkillSuccess(skills));
       }).catch(error => {
         console.log('error for /getskill - ', error);
         return dispatch(getSkillFailure(error));
