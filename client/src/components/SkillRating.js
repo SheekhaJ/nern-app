@@ -52,11 +52,8 @@ function SkillRating(props) {
                 </DialogActions>
             </Dialog>
             <div>
-                {/* <Button color="primary" onClick={(e) => handleLanguageClick(e.target.innerHTML)} >{props.language}</Button> */}
                 <Typography color="primary">{props.language}</Typography>
-                <Rating name={lang} value={value}
-                    // onClick={handleRatingsClick}
-                    onChange={handleRatingsChange} />
+                <Rating name={lang} value={value} onChange={handleRatingsChange} />
             </div>
         </div>
     );

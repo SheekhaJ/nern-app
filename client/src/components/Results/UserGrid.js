@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import {connect} from 'react-redux'
 import {fetchUsers} from '../../redux/actions';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -17,7 +18,9 @@ function UserGrid(props) {
     const [userprofileid, setUserprofileid] = useState('');
     
     useEffect(() => {
-        props.fetchUsersAction();
+        setTimeout(() => {
+            props.fetchUsersAction(props.skill);
+        }, 300)
     }, []);
 
     useEffect(() => {
@@ -33,16 +36,16 @@ function UserGrid(props) {
         <Grid container className={classes.root} justify="center" spacing={10}>
             <Grid item xs={9}>
                 <Grid container justify="center" spacing={spacing}>
-                   {props.users && props.users.map(result => (
-                        <Grid key={result.id} item>
-                            <Result key={result.id} result={result} usergridProfileIdCallback={getUserprofileid}></Result>
-                        </Grid>
-                    ))}
+                    {props.users && props.users.map((result, index) => (
+                     <Grid key={result.id} item>
+                        <Result key={result.id} index={index} result={result} usergridProfileIdCallback={getUserprofileid}></Result>
+                    </Grid>
+                 ))}
                 </Grid>
             </Grid>
         </Grid>
-            )
-        }
+        )
+    }
         
 const mapStateToProps = (state) => {
     return {
@@ -52,7 +55,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchUsersAction: () => dispatch(fetchUsers())
+        fetchUsersAction: (query) => dispatch(fetchUsers(query))
     }
 }
         
