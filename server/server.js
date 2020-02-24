@@ -117,13 +117,14 @@ router.get('/query', (req,res)=>{
     console.log('query q is "'+q+'"');
     if (q!=''){
         session.readTransaction(function(transaction){
-            var result = transaction.run("match (u:user)-[k:knows]->(l:language) where l.name=~'(?i)"+q+"'  return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.degree desc");
-            return result
-        }).then(function(result){
-            session.close();
+            return transaction.run("match (u:user)-[k:knows]->(l:language) where l.name=~'(?i)"+q+"' return u.id,u.firstName,u.lastName,u.email,u.githubUrl,u.linkedinUrl order by u.outDegree desc");
+        }).then(function (result) {
+            console.log('result of query search - ',result)
             return res.json({result})
         }).catch(function(error){
             console.log('query error: '+error);
+        }).finally(() => {
+            session.close();
         })
     } else {
         res.json({res: q});
