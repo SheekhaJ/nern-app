@@ -214,14 +214,14 @@ router.post("/user", (req, res) => {
         var result = null;
         var temp = transaction.run("match (u:user{id:'" + userid + "'}) return u")
             .then(txresult1 => {
-                console.log('txresult1 - ', txresult1.records[0]);
+                // console.log('txresult1 - ', txresult1.records[0]);
                 result = { ...result, userProfile: txresult1 };
                 return result
             })
             .then(() => {
                 return transaction.run("match (u:user{id:'" + userid + "'})-[k:knows]->(v) return u,k,v")
                     .then(txresult2 => {
-                        console.log('txresult2 - ', txresult2.records);
+                        // console.log('txresult2 - ', txresult2.records);
                         result = { ...result, languages: txresult2 };
                         return result
                     }).catch(txerror2 => {
@@ -231,7 +231,7 @@ router.post("/user", (req, res) => {
             .then(() => {
                 return transaction.run("match (u:user{id:'" + userid + "'})-[f:friendOf]->(v) return u,f,v")
                     .then(txresult3 => {
-                        console.log('txresult3 - ', txresult3.records);
+                        // console.log('txresult3 - ', txresult3.records);
                         result = { ...result, friends: txresult3 };
                         return result
                     }).catch(txerror3 => {
@@ -244,7 +244,7 @@ router.post("/user", (req, res) => {
     }).then(result => {
         // console.log('combined result - ', result)
         return res.json({ result });
-    }).catch(function(error) {
+    }).catch(error => {
         console.log("/user error: " + error);
     }).finally((result) => {
         session.close();
@@ -373,16 +373,28 @@ router.post('/addfriends', (req, res) => {
 })
 
 router.post('/getuserratings', (req, res) => {
-    // console.log('payload at /getuserratings - ', req);
     var loggedinuserid = req.body.loggedinuserid
     var profileuserid = req.body.profileuserid
     session.readTransaction(function (transaction) {
         return transaction.run("match (u:user{id:'"+loggedinuserid+"'})-[r:rates]->(v:user{id:'"+profileuserid+"'}) return u,r,v")
     }).then(function (result) {
-        console.log('/getuserratings result - ', result);
+        // console.log('/getuserratings result - ', result);
         return res.json({ result });
     }).catch(function (error) {
         console.log('/getuserratings error - ', error);
+    }).finally(() => {
+        session.close();
+    })
+})
+
+router.get('/getskill', (req, res) => {
+    session.readTransaction(function (transaction) {
+        return transaction.run("match (l:language) return l order by l.inDegree desc limit 10");
+    }).then(function (result) {
+        // console.log('result /getskill - ', result.records)
+        return res.json({result})
+    }).catch(function (error) {
+        console.log('/getskill error - ', error);
     }).finally(() => {
         session.close();
     })
