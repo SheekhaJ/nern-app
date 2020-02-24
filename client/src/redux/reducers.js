@@ -234,7 +234,7 @@ const rootReducer = combineReducers({
   getUserFriends: userFriendsReducer,
   addFriends: addFriendsReducer,
   getUserRatings: getUserRatingsReducer,
-  updateUserLanguageRating: updateUserLangRatingReducer
+  updateUserLanguageRating: updateUserLangRatingReducer,
   getSkills: getSkillsReducer
 });
 export default rootReducer

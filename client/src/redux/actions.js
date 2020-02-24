@@ -473,13 +473,13 @@ export const getSkills = () => {
       .then(response => {
         var res = response.data.result.records
         var skills = new Map()
-        console.log('resp for /getskill - ', res);
+        // console.log('resp for /getskill - ', res);
 
         for (var i = 0; i < res.length; i++){
           skills[res[i]._fields[0].properties['id']] = res[i]._fields[0].properties['name'];
         }
 
-        console.log('response for /getskill - ', skills);
+        // console.log('response for /getskill - ', skills);
         return dispatch(getSkillSuccess(skills));
       }).catch(error => {
         console.log('error for /getskill - ', error);

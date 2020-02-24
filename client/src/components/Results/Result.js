@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function Result({ result, usergridProfileIdCallback }) {
+function Result({ result, usergridProfileIdCallback, index }) {
   const classes = useStyles();
   const [id, firstName, lastName, email, githubUrl, linkedinUrl] = result;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -44,118 +44,96 @@ function Result({ result, usergridProfileIdCallback }) {
 
   const open = Boolean(anchorEl);
   const popoverid = open ? "simple-popover" : undefined;
-
-  return (
-    <Card className={classes.card} key={result.id}>
-      <CardActionArea key={result.id}>
-        <CardMedia
-          component="img"
-          key={result.id}
-          alt={id}
-          height="180"
-          image={process.env.PUBLIC_URL + "/profile.jpg"}
-          title="Contemplative Reptile"
-          onClick={e => {
-            setProfileUserid(e.currentTarget["alt"]);
-          }}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" key={result.id} component="h6">
+  
+  if (index < 8) {
+    return (
+      <Card className={classes.card} key={result.id}>
+        <CardActionArea key={result.id}>
+          <CardMedia
+            component="img"
+            key={result.id}
+            alt={id}
+            height="180"
+            image={process.env.PUBLIC_URL + "/profile.jpg"}
+            title="Contemplative Reptile"
+            onClick={e => {
+              setProfileUserid(e.currentTarget["alt"]);
+            }}
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" key={result.id} component="h6">
+              {" "}
+              {firstName} {lastName}{" "}
+            </Typography>
+            {/* <Typography variant="body2" color="textSecondary" key={result.id} component="p"> Skills: {email} </Typography> */}
+            <Rating name="half-rating" value={3} precision={0.25} />
+          </CardContent>
+        </CardActionArea>
+        <CardActions key={result.id}>
+          <Button size="small" key={result.id} color="primary" variant="contained" onClick={handleClick} >
             {" "}
-            {firstName} {lastName}{" "}
-          </Typography>
-          {/* <Typography variant="body2" color="textSecondary" key={result.id} component="p"> Skills: {email} </Typography> */}
-          <Rating name="half-rating" value={3} precision={0.25} />
-        </CardContent>
-      </CardActionArea>
-      <CardActions key={result.id}>
-        <Button
-          size="small"
-          key={result.id}
-          color="primary"
-          variant="contained"
-          onClick={handleClick}
-        >
-          {" "}
-          Email{" "}
-        </Button>
-        <Popover
-          id={popoverid}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center"
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center"
-          }}
-        >
-          <Typography key={result.id} className={classes.typography}>
-            {email}
-          </Typography>
-        </Popover>
+            Email{" "}
+          </Button>
+          <Popover id={popoverid} open={open} anchorEl={anchorEl} onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center"
+            }}
+          >
+            <Typography key={result.id} className={classes.typography}>
+              {email}
+            </Typography>
+          </Popover>
 
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          onClick={handleClick}
-        >
-          {" "}
-          GitHub{" "}
-        </Button>
-        <Popover
-          id={popoverid}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center"
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center"
-          }}
-        >
-          <Typography key={result.id} className={classes.typography}>
-            {githubUrl}
-          </Typography>
-        </Popover>
+          <Button size="small" color="primary" variant="contained" onClick={handleClick} >
+            {" "}
+            GitHub{" "}
+          </Button>
 
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          onClick={handleClick}
-        >
-          {" "}
-          Linkedin{" "}
-        </Button>
-        <Popover
-          id={popoverid}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center"
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center"
-          }}
-        >
-          <Typography key={result.id} className={classes.typography}>
-            {linkedinUrl}
-          </Typography>
-        </Popover>
-      </CardActions>
-    </Card>
-  );
+          <Popover id={popoverid} open={open} anchorEl={anchorEl} onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center"
+            }}
+          >
+            <Typography key={result.id} className={classes.typography}>
+              {githubUrl}
+            </Typography>
+          </Popover>
+
+          <Button size="small" color="primary" variant="contained" onClick={handleClick} >
+            {" "}
+            Linkedin{" "}
+          </Button>
+          <Popover id={popoverid} open={open} anchorEl={anchorEl} onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center"
+            }}
+          >
+            <Typography key={result.id} className={classes.typography}>
+              {linkedinUrl}
+            </Typography>
+          </Popover>
+        </CardActions>
+      </Card>
+    );
+  } else {
+    return null;
+  }
+  
 }
 
 export default Result
