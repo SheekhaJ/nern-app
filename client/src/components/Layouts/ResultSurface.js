@@ -29,13 +29,17 @@ function ResultSurface(props) {
   const classes = useStyles();
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(true)
+  const [skill, setSkill] = useState('')
   const skills = Object.assign({}, props.skills);
 
   useEffect(() => {
     setQuery(props.query)
+    setSkill(props.query)
+    console.log('query in useEffect of query - ', props.query);
   }, [props.query])
   
   useEffect(() => {
+    console.log('query in result surface - ', props.query, query);
     if (props.skills != {}) {
       props.getSkills();
     }
@@ -46,13 +50,15 @@ function ResultSurface(props) {
     props.profileid(userid)
   }
   
+  if (props.skills){
     return (
+      Object.keys(skills).map((skillid) => (
       <div>
         <Paper className={classes.root}>
-          
-          <AddFriends></AddFriends>
-          
-          <Divider variant="middle" />
+
+          {/* <AddFriends></AddFriends> */}
+
+          {/* <Divider variant="middle" /> */}
 
           {/* {query ? (
             <Typography component="h6" variant="h5" color="primary" gutterBottom display="block" >
@@ -63,23 +69,46 @@ function ResultSurface(props) {
               Number of results - {props.users.length}
             </Typography>
             )} */}
-          
-          <div className="classes.section2">
-            {props.skills && Object.keys(skills).map((skillid, index) => (
-              <ExpansionPanel expanded={true} key={skillid} >
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" >
-                  <Typography className={classes.heading} color="primary" variant="h5" component="h6" >{skills[skillid]}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <UserGrid usergridProfileIdCallback={getUserprofileid} key={skillid} skill={skills[skillid]} />
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ))}
 
+          <div className="classes.section2">
+            {/* {props.skills && Object.keys(skills).map((skillid) => ( */}
+            <ExpansionPanel expanded={true} key={skillid} >
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header" >
+                <Typography className={classes.heading} color="primary" variant="h5" component="h6" >{skills[skillid]}</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <UserGrid usergridProfileIdCallback={getUserprofileid} key={skillid} skill={skills[skillid]} />
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+            {/* } */}
           </div>
         </Paper>
       </div>
-    );
+    )));
+  } else {
+      return(
+        <div>
+          <Paper className={classes.root}>
+
+            <AddFriends></AddFriends>
+
+            <Divider variant="middle" />
+
+            {query ? (
+            <Typography component="h6" variant="h5" color="primary" gutterBottom display="block" >
+              Number of results for query "{props.query}" - {props.users.length}
+            </Typography>
+          ) : (
+            <Typography component="h6" variant="h5" color="primary" gutterBottom display="block" >
+              Number of results - {props.users.length}
+            </Typography>
+            )}
+
+            <UserGrid usergridProfileIdCallback={getUserprofileid} key={query} skill={query} />
+          </Paper>
+        </div>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
