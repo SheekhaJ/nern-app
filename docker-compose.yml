@@ -1,0 +1,45 @@
+version: '3'
+
+##############################################
+# Setup node container
+##############################################
+services: 
+    server:
+        build: 
+            context: .
+            dockerfile: ./server/server.Dockerfile
+        expose: 
+            - ${APP_SERVER_PORT}
+        environment: 
+            - "API_HOST:${API_HOST}"
+            - "API_SERVER_PORT:${APP_SERVER_PORT}"
+        ports: 
+            - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+        # volumes: 
+        #     - ./server:./nern-app/server
+
+##############################################
+# Setup react container
+##############################################
+    client:
+        build: 
+            context: .
+            dockerfile: ./client/client.Dockerfile
+        expose: 
+            - ${REACT_APP_PORT}
+        environment: 
+            - "REACT_APP_PORT:${REACT_APP_PORT}"
+        ports:
+            - ${REACT_APP_PORT}:${REACT_APP_PORT}
+        # volumes: 
+        #     - ./client:./nern-app/client
+
+##############################################
+# Setup neo4j database
+##############################################
+    neo4j:
+        image: 'docker.io/bitnami/neo4j:4-debian-10'
+        ports:
+        - '${NEO4J_HTTP_PORT_NUMBER}:${NEO4J_HTTP_PORT_NUMBER}'
+        - '${NEO4J_HTTPS_PORT_NUMBER}:${NEO4J_HTTPS_PORT_NUMBER}'
+        - '${NEO4J_BOLT_PORT_NUMBER}:${NEO4J_BOLT_PORT_NUMBER}'
