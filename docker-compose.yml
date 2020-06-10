@@ -8,6 +8,7 @@ services:
         build: 
             context: .
             dockerfile: ./server/server.Dockerfile
+        image: nern-app-server
         expose: 
             - ${APP_SERVER_PORT}
         environment: 
@@ -25,6 +26,7 @@ services:
         build: 
             context: .
             dockerfile: ./client/client.Dockerfile
+        image: nern-app-client
         expose: 
             - ${REACT_APP_PORT}
         environment: 
@@ -38,7 +40,8 @@ services:
 # Setup neo4j database
 ##############################################
     neo4j:
-        image: 'docker.io/bitnami/neo4j:4-debian-10'
+        image: 'bitnami/neo4j:3.5.14-ol-7-r27'
+        # image: 'docker.io/bitnami/neo4j:4-debian-10'
         ports:
         - '${NEO4J_HTTP_PORT_NUMBER}:${NEO4J_HTTP_PORT_NUMBER}'
         - '${NEO4J_HTTPS_PORT_NUMBER}:${NEO4J_HTTPS_PORT_NUMBER}'
