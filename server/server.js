@@ -37,6 +37,10 @@ async function tempSleep(ms) {
     })
 }
 
+router.get('/',(req,res) => {
+    return res.json({message: 'Welcome to ERS at GET /'});
+})
+
 router.post('/login', (req, res) => {
     var email = req.body.loginusername;
     var password = req.body.loginpassword;
